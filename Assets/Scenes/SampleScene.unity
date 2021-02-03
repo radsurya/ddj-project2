@@ -284,7 +284,7 @@ GameObject:
   - component: {fileID: 334832486}
   - component: {fileID: 334832487}
   - component: {fileID: 334832488}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Helper
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -413,9 +413,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b4ae42f26d99ac40b9229dd03ae3e3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  arrow: {fileID: 519420030}
-  m_Text: {fileID: 1860785787}
-  message: 
+  battleSystem: {fileID: 1223459579}
 --- !u!114 &334832488
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -442,6 +440,7 @@ GameObject:
   m_Component:
   - component: {fileID: 348914829}
   - component: {fileID: 348914828}
+  - component: {fileID: 348914830}
   m_Layer: 0
   m_Name: Arrow
   m_TagString: Untagged
@@ -513,6 +512,20 @@ Transform:
   m_Father: {fileID: 145113514}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &348914830
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 348914827}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee2750f9a4f5f8a4c97a567c718b5a0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  arrow: {fileID: 348914827}
+  battleSystem: {fileID: 1223459579}
 --- !u!1 &396205783
 GameObject:
   m_ObjectHideFlags: 0
@@ -526,7 +539,7 @@ GameObject:
   - component: {fileID: 396205784}
   - component: {fileID: 396205787}
   - component: {fileID: 396205788}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Hero
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -655,9 +668,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b4ae42f26d99ac40b9229dd03ae3e3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  arrow: {fileID: 519420030}
-  m_Text: {fileID: 1860785787}
-  message: 
+  battleSystem: {fileID: 1223459579}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -669,7 +680,6 @@ GameObject:
   - component: {fileID: 519420032}
   - component: {fileID: 519420031}
   - component: {fileID: 519420029}
-  - component: {fileID: 519420030}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -685,20 +695,6 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_Enabled: 1
---- !u!114 &519420030
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 519420028}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ee2750f9a4f5f8a4c97a567c718b5a0e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arrow: {fileID: 348914827}
-  m_Text: {fileID: 1860785787}
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0
@@ -768,7 +764,7 @@ GameObject:
   - component: {fileID: 978760903}
   - component: {fileID: 978760902}
   - component: {fileID: 978760901}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -906,12 +902,9 @@ MonoBehaviour:
   heroHud: {fileID: 0}
   assistantHud: {fileID: 0}
   enemyHud1: {fileID: 0}
-  enemyHud2: {fileID: 0}
-  enemyHud3: {fileID: 0}
-  enemyHud4: {fileID: 0}
   assistantUnit: {fileID: 334832488}
   enemyUnit1: {fileID: 2116783073}
-  dialogueText: {fileID: 1860785787}
+  dialogueText: {fileID: 1860785789}
 --- !u!1 &1560001524
 GameObject:
   m_ObjectHideFlags: 0
@@ -1004,8 +997,9 @@ GameObject:
   - component: {fileID: 1860785786}
   - component: {fileID: 1860785788}
   - component: {fileID: 1860785787}
+  - component: {fileID: 1860785789}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: DialogueBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1126,6 +1120,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1860785785}
   m_CullTransparentMesh: 0
+--- !u!114 &1860785789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1860785785}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 323699358c5c476409f43e6fcf921da0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dialogueText: {fileID: 1860785787}
 --- !u!1 &2116783067
 GameObject:
   m_ObjectHideFlags: 0
@@ -1140,7 +1147,7 @@ GameObject:
   - component: {fileID: 2116783071}
   - component: {fileID: 2116783072}
   - component: {fileID: 2116783073}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Slime
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1269,9 +1276,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b4ae42f26d99ac40b9229dd03ae3e3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  arrow: {fileID: 519420030}
-  m_Text: {fileID: 1860785787}
-  message: 
+  battleSystem: {fileID: 1223459579}
 --- !u!114 &2116783073
 MonoBehaviour:
   m_ObjectHideFlags: 0

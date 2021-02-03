@@ -8,26 +8,8 @@ public class ArrowControl : MonoBehaviour
 {
     int pos = 1;
     public GameObject arrow;
-    public TextMeshProUGUI m_Text;
-    string message;
-    float lettertime;
 
-    void Start()
-    {
-
-    }
-
-    public IEnumerator TypeText()
-    {
-        message = m_Text.text;
-        m_Text.text = "";
-        lettertime = 0.05f;
-        foreach (char letter in message.ToCharArray())
-        {
-            m_Text.text += letter;
-            yield return new WaitForSeconds(lettertime);
-        }
-    }
+    public BattleSystem battleSystem; 
 
     void Update()
     {
@@ -71,31 +53,24 @@ public class ArrowControl : MonoBehaviour
         {
             switch (pos)
             {
-                case 1:
-                    StopCoroutine("TypeText");
-                    m_Text.text = "Hide";
-                    StartCoroutine("TypeText");
+                case 1: //HIDE
+                    battleSystem.OnHideButton();
                     break;
-                case 2:
-                    StopCoroutine("TypeText");
-                    m_Text.text = "Stop";
-                    StartCoroutine("TypeText");
+                case 2: //STOP
+                    battleSystem.OnStopButton();
                     break;
-                case 3:
-                    StopCoroutine("TypeText");
-                    m_Text.text = "Push";
-                    StartCoroutine("TypeText");
+                case 3: //PUSH
+                    battleSystem.OnPushButton();                  
                     break;
-                case 4:
-                    StopCoroutine("TypeText");
-                    m_Text.text = "Item";
-                    StartCoroutine("TypeText");
+                case 4: //ITEM
+                    battleSystem.OnItemButton();                 
                     break;
             }
         }
-        if (Input.GetKeyDown(KeyCode.A))
+        //TODO: Implement instant text display.
+        /*if (Input.GetKeyDown(KeyCode.A))
         {
             lettertime = 0f;
-        }
+        }*/
     }
 }

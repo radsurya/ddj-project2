@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public enum BattleState { START, PLAYERTURN, ENEMYTURN, WON, LOST }
+public enum BattleState { START, PLAYERTURN, PUSHSELECT, ENEMYTURN, WON, LOST }
 
 public enum UnitType { HERO, ASSISTANT, BIGBLOB }
 
@@ -29,18 +29,18 @@ public class BattleSystem : MonoBehaviour
     public BattleHud heroHud;
     public BattleHud assistantHud;
     public BattleHud enemyHud1;
-    public BattleHud enemyHud2;
+    /*public BattleHud enemyHud2;
     public BattleHud enemyHud3;
-    public BattleHud enemyHud4;    
+    public BattleHud enemyHud4; */   
 
     Unit heroUnit;
     public Unit assistantUnit;
     public Unit enemyUnit1;
-    Unit enemyUnit2;
-    Unit enemyUnit3;
-    Unit enemyUnit4;
+    /*public Unit enemyUnit2;
+    public Unit enemyUnit3;
+    public Unit enemyUnit4;*/
 
-    public TextMeshProUGUI dialogueText;
+    public DialogueBox dialogueText;
     //Game level. Tutorial is 0.
     int level = 0;
     //Game turn.
@@ -68,7 +68,7 @@ public class BattleSystem : MonoBehaviour
         //GameObject enemyObject1 = Instantiate(enemyPrefab1, enemyLocation1);
         //enemyUnit1 = enemyObject1.GetComponent<Unit>();
         //enemyHud1.SetHUD(enemyUnit1);
-        dialogueText.text = "A "+enemyUnit1.unitName+" politely approaches.";        
+        dialogueText.UpdateText("A "+enemyUnit1.unitName+" politely approaches.");       
         //TODO: FOR each prefab != null initialise and add to list             
         
         //Wait 2 seconds.
@@ -80,11 +80,11 @@ public class BattleSystem : MonoBehaviour
     }
 
     void PlayerTurn(){
-        dialogueText.text = "Your time to act!";
+        dialogueText.UpdateText("Your time to act!");
     }
 
     IEnumerator EnemyTurn(){
-        dialogueText.text = enemyUnit1.unitName+" attacks!";
+        dialogueText.UpdateText(enemyUnit1.unitName+" attacks!");
         yield return new WaitForSeconds(1f);
         bool isDead = assistantUnit.TakeDamage(enemyUnit1.damage);
         //assistantHud.SetHP(assistantUnit.currentHP);
@@ -101,9 +101,9 @@ public class BattleSystem : MonoBehaviour
     void EndBattle(){
         //We could check state for safety
         if(state == BattleState.WON){
-            dialogueText.text = "You have survived yet another ordeal!";
+            dialogueText.UpdateText("You have survived yet another ordeal!");
         }else if (state == BattleState.LOST){
-            dialogueText.text = "The situation has developed not necessarily to your advantage.";
+            dialogueText.UpdateText("The situation has developed not necessarily to your advantage.");
         }
     }
 
@@ -120,10 +120,59 @@ public class BattleSystem : MonoBehaviour
         }*/
     }
 
+    public void OnHideButton(){
+        if(state == BattleState.PLAYERTURN){
+            //Select target
+            StartCoroutine(PlayerAttack());
+
+        }else if(state == BattleState.ENEMYTURN){
+
+        }/*else if(state == BattleState.HEROTURN){
+
+        }*/
+    }
+
+    public void OnPushButton(){
+        if(state == BattleState.PLAYERTURN){
+            //Select target
+            state = BattleState.PUSHSELECT;
+            //StartCoroutine(PlayerAttack());
+
+        }else if(state == BattleState.ENEMYTURN){
+
+        }/*else if(state == BattleState.HEROTURN){
+
+        }*/
+    }
+
+    public void OnStopButton(){
+        if(state == BattleState.PLAYERTURN){
+            //Select target
+            StartCoroutine(PlayerAttack());
+
+        }else if(state == BattleState.ENEMYTURN){
+
+        }/*else if(state == BattleState.HEROTURN){
+
+        }*/
+    }
+
+    public void OnItemButton(){
+        if(state == BattleState.PLAYERTURN){
+            //Select target
+            StartCoroutine(PlayerAttack());
+
+        }else if(state == BattleState.ENEMYTURN){
+
+        }/*else if(state == BattleState.HEROTURN){
+
+        }*/
+    }
+
     IEnumerator PlayerAttack(){
         bool isDead = enemyUnit1.TakeDamage(assistantUnit.damage);
         //enemyHud1.SetHP(enemyUnit1.currentHP);
-        dialogueText.text = enemyUnit1.unitName+" has just taken "+assistantUnit.damage+" damage!";
+        dialogueText.UpdateText(enemyUnit1.unitName+" has just taken "+assistantUnit.damage+" damage!");
         //Wait
         yield return new WaitForSeconds(2f);
         
@@ -134,5 +183,11 @@ public class BattleSystem : MonoBehaviour
             state = BattleState.ENEMYTURN;
             StartCoroutine(EnemyTurn());
         }        
+    }
+
+    public void objectSelected(GameObject gameObject){
+        if(state == BattleState.PUSHSELECT){
+            Debug.Log(gameObject.ToString()+" selected!");
+        }
     }
 }
