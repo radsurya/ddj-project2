@@ -21,7 +21,7 @@ public class ArrowControl : MonoBehaviour
     {
         message = m_Text.text;
         m_Text.text = "";
-        lettertime = 0.08f;
+        lettertime = 0.05f;
         foreach (char letter in message.ToCharArray())
         {
             m_Text.text += letter;
