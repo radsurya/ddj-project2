@@ -10,25 +10,28 @@ public class ArrowControl : MonoBehaviour
     public GameObject arrow;
     public TextMeshProUGUI m_Text;
     string message;
+    float lettertime;
 
     void Start()
     {
-        message = m_Text.text;
-        m_Text.text = "";
-        StartCoroutine(TypeText());
+
     }
 
-    IEnumerator TypeText()
+    public IEnumerator TypeText()
     {
+        message = m_Text.text;
+        m_Text.text = "";
+        lettertime = 0.08f;
         foreach (char letter in message.ToCharArray())
         {
             m_Text.text += letter;
-            yield return new WaitForSeconds(0.08f);
+            yield return new WaitForSeconds(lettertime);
         }
     }
+
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.UpArrow))
+        if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
         {
             if (pos == 1)
             {
@@ -46,7 +49,7 @@ public class ArrowControl : MonoBehaviour
             }
 
         }
-        if (Input.GetKeyDown(KeyCode.DownArrow))
+        if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
         {
             if (pos == 4)
             {
@@ -69,18 +72,30 @@ public class ArrowControl : MonoBehaviour
             switch (pos)
             {
                 case 1:
+                    StopCoroutine("TypeText");
                     m_Text.text = "Hide";
+                    StartCoroutine("TypeText");
                     break;
                 case 2:
+                    StopCoroutine("TypeText");
                     m_Text.text = "Stop";
+                    StartCoroutine("TypeText");
                     break;
                 case 3:
+                    StopCoroutine("TypeText");
                     m_Text.text = "Push";
+                    StartCoroutine("TypeText");
                     break;
                 case 4:
+                    StopCoroutine("TypeText");
                     m_Text.text = "Item";
+                    StartCoroutine("TypeText");
                     break;
             }
+        }
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            lettertime = 0f;
         }
     }
 }
