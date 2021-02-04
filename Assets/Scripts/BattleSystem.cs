@@ -12,20 +12,6 @@ public class BattleSystem : MonoBehaviour
 {
     public BattleState state;
 
-    /*public Transform heroLocation;
-    public Transform assistantLocation;
-    public Transform enemyLocation1;
-    public Transform enemyLocation2;
-    public Transform enemyLocation3;
-    public Transform enemyLocation4;*/
-
-    /*public GameObject heroPrefab;
-    public GameObject assistantObject;
-    public GameObject enemyObject1;
-    public GameObject enemyPrefab2;
-    public GameObject enemyPrefab3;
-    public GameObject enemyPrefab4;*/
-
     public BattleHud heroHud;
     public BattleHud assistantHud;
     public BattleHud enemyHud1;
@@ -60,14 +46,14 @@ public class BattleSystem : MonoBehaviour
         //Initialise assistant object.
         //GameObject assistantObject = Instantiate(assistantPrefab, assistantLocation);
         //assistantUnit = assistantObject.GetComponent<Unit>();
-        //assistantHud.SetHUD(assistantUnit);
+        assistantHud.SetHUD(assistantUnit);
 
         //TODO: Initialise hero object.
 
         //Initialise enemy objects
         //GameObject enemyObject1 = Instantiate(enemyPrefab1, enemyLocation1);
         //enemyUnit1 = enemyObject1.GetComponent<Unit>();
-        //enemyHud1.SetHUD(enemyUnit1);
+        enemyHud1.SetHUD(enemyUnit1);
         dialogueText.UpdateText("A "+enemyUnit1.unitName+" politely approaches.");       
         //TODO: FOR each prefab != null initialise and add to list             
         
@@ -87,7 +73,7 @@ public class BattleSystem : MonoBehaviour
         dialogueText.UpdateText(enemyUnit1.unitName+" attacks!");
         yield return new WaitForSeconds(1f);
         bool isDead = assistantUnit.TakeDamage(enemyUnit1.damage);
-        //assistantHud.SetHP(assistantUnit.currentHP);
+        assistantHud.SetHP(assistantUnit.currentHP);
         yield return new WaitForSeconds(1f);
         if(isDead){
             state = BattleState.LOST;
@@ -171,7 +157,7 @@ public class BattleSystem : MonoBehaviour
 
     IEnumerator PlayerAttack(){
         bool isDead = enemyUnit1.TakeDamage(assistantUnit.damage);
-        //enemyHud1.SetHP(enemyUnit1.currentHP);
+        enemyHud1.SetHP(enemyUnit1.currentHP);
         dialogueText.UpdateText(enemyUnit1.unitName+" has just taken "+assistantUnit.damage+" damage!");
         //Wait
         yield return new WaitForSeconds(2f);
