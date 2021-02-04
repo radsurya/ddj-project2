@@ -7,23 +7,32 @@ public class DialogueBox : MonoBehaviour
 {
     public TextMeshProUGUI dialogueText;
     static float lettertime = 0.05f;
+
+    bool typing = false;
     
-    private string message;
+    private Queue<string> messages = new Queue<string>();
 
     public void UpdateText(string m){
-        //Stop coroutine here if two routines run simultaneously.
-        StopCoroutine("TypeText");
-        message = m;
-        StartCoroutine("TypeText");
+        //Must wait for message to finish before starting next one.
+        messages.Enqueue(m);
+        if(!typing)
+            StartCoroutine("TypeText");
     }
 
     private IEnumerator TypeText()
     {
-        dialogueText.text = "";
-        foreach (char letter in message.ToCharArray())
+        typing = true;
+        while (messages.Count > 0)
         {
-            dialogueText.text += letter;
-            yield return new WaitForSeconds(lettertime);
-        }
+            string message = messages.Dequeue();
+            dialogueText.text = "";
+            foreach (char letter in message.ToCharArray())
+            {
+                dialogueText.text += letter;
+                yield return new WaitForSeconds(lettertime);
+            }
+            yield return new WaitForSeconds(1f); //Always wait 1 second after typing.
+        }   
+        typing = false;     
     }
 }

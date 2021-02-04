@@ -1,12 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
 
 public enum BattleState { START, PLAYERTURN, PUSHSELECT, ENEMYTURN, WON, LOST }
 
-//public enum UnitType { HERO, ASSISTANT, BIGBLOB }
+public enum Action { ATTACK, DEFEND, TAUNT }
 
 public class BattleSystem : MonoBehaviour
 {
@@ -14,19 +12,15 @@ public class BattleSystem : MonoBehaviour
 
     public BattleHud heroHud;
     public BattleHud assistantHud;
-    public BattleHud enemyHud1;
-    public BattleHud enemyHud2;
-    public BattleHud enemyHud3;
-    public BattleHud enemyHud4;  
+    public BattleHud[] enemyHUDs = new BattleHud[4];
 
     public Unit heroUnit;
     public Unit assistantUnit;
-    public Unit enemyUnit1;
-    public Unit enemyUnit2;
-    public Unit enemyUnit3;
-    public Unit enemyUnit4;
+    public Unit[] enemies = new Unit[4];
 
     public DialogueBox dialogueText;
+
+    private BattleScript battleScript = new BattleScript();  
     //Game level. Tutorial is 0.
     //int level = 0;
     //Game turn.
@@ -38,38 +32,44 @@ public class BattleSystem : MonoBehaviour
         StartCoroutine(SetupBattle());
     }
     //IEnumerator to turn setup into Coroutine and make it wait.
-    IEnumerator SetupBattle(){      
-        //TODO: Figure out how to receive this array externally or set up scenes so as to not need them.
-        //First two setup allies, the rest are enemies.
-        //UnitType[] unitTypes = {UnitType.HERO, UnitType.ASSISTANT, UnitType.BIGBLOB};
+    IEnumerator SetupBattle(){
+        //WARNING: Each scene needs to be manually prepared, for different levels.
 
         //Initialise assistant object.
         assistantHud.SetHUD(assistantUnit);
         //Initialise hero object.
         heroHud.SetHUD(heroUnit);
         //Initialise enemy objects
-        Unit[] enemies = {enemyUnit1, enemyUnit2, enemyUnit3, enemyUnit4};
-        BattleHud[] enemyHuds = {enemyHud1, enemyHud2, enemyHud3, enemyHud4};
+        //enemies = {enemyUnit1, enemyUnit2, enemyUnit3, enemyUnit4};
+        List<Unit> livingEnemies = new List<Unit>();
         for (int i = 0; i < enemies.Length && enemies[i] != null; i++){
-            enemyHuds[i].SetHUD(enemies[i]);
+            livingEnemies.Add(enemies[i]);
+            enemyHUDs[i].SetHUD(enemies[i]);
             //TODO: Custom enemy walk in text
             dialogueText.UpdateText("A "+enemies[i].unitName+" politely approaches.");  
             yield return new WaitForSeconds(2f);    //Wait time should match enemy entrance text.
-        }        
+        }
+        enemies = livingEnemies.ToArray();     
         
         //Setup finished, change state
         state = BattleState.PLAYERTURN;
         PlayerTurn();
     }
 
+//////////////////////////////////////////////TURN FUNCTIONS//////////////////////////////////////////////
+
     void PlayerTurn(){
+        //TODO: Get intent from each enemy.
+        dialogueText.UpdateText(battleScript.getHeroIntent());
         dialogueText.UpdateText("Your time to act!");
+        //The game does nothing during our turn, moving on only through inputs.
     }
 
-    IEnumerator EnemyTurn(){
-        dialogueText.UpdateText(enemyUnit1.unitName+" attacks!");
+    IEnumerator HeroTurn(){
+        //heroUnit.decideAction();
+        dialogueText.UpdateText(enemies[0].unitName+" attacks!");
         yield return new WaitForSeconds(1f);
-        bool isDead = assistantUnit.TakeDamage(enemyUnit1.damage);
+        bool isDead = assistantUnit.TakeDamage(enemies[0].damage);
         assistantHud.SetHP(assistantUnit.currentHP);
         yield return new WaitForSeconds(1f);
         if(isDead){
@@ -81,6 +81,21 @@ public class BattleSystem : MonoBehaviour
         }        
     }
 
+    IEnumerator EnemyTurn(){
+        dialogueText.UpdateText(enemies[0].unitName+" attacks!");
+        yield return new WaitForSeconds(1f);
+        bool isDead = assistantUnit.TakeDamage(enemies[0].damage);
+        assistantHud.SetHP(assistantUnit.currentHP);
+        yield return new WaitForSeconds(1f);
+        if(isDead){
+            state = BattleState.LOST;
+            EndBattle();
+        }else{
+            state = BattleState.PLAYERTURN;
+            PlayerTurn();
+        }       
+    }
+
     void EndBattle(){
         //We could check state for safety
         if(state == BattleState.WON){
@@ -89,6 +104,26 @@ public class BattleSystem : MonoBehaviour
             dialogueText.UpdateText("The situation has developed not necessarily to your advantage.");
         }
     }
+
+//////////////////////////////////////////////PROCESS ACTIONS//////////////////////////////////////////////
+
+    IEnumerator PlayerAttack(){
+        bool isDead = enemies[0].TakeDamage(assistantUnit.damage);
+        enemyHUDs[0].SetHP(enemies[0].currentHP);
+        dialogueText.UpdateText(enemies[0].unitName+" has just taken "+assistantUnit.damage+" damage!");
+        //Wait
+        yield return new WaitForSeconds(2f);
+        
+        if(isDead){
+            state = BattleState.WON;
+            EndBattle();
+        }else{
+            state = BattleState.ENEMYTURN;
+            StartCoroutine(EnemyTurn());
+        }      
+    }
+
+//////////////////////////////////////////////BUTTON SELECTED//////////////////////////////////////////////
 
     public void OnAttackButton(){
         Debug.Log("Button clicked!");
@@ -150,22 +185,6 @@ public class BattleSystem : MonoBehaviour
         }/*else if(state == BattleState.HEROTURN){
 
         }*/
-    }
-
-    IEnumerator PlayerAttack(){
-        bool isDead = enemyUnit1.TakeDamage(assistantUnit.damage);
-        enemyHud1.SetHP(enemyUnit1.currentHP);
-        dialogueText.UpdateText(enemyUnit1.unitName+" has just taken "+assistantUnit.damage+" damage!");
-        //Wait
-        yield return new WaitForSeconds(2f);
-        
-        if(isDead){
-            state = BattleState.WON;
-            EndBattle();
-        }else{
-            state = BattleState.ENEMYTURN;
-            StartCoroutine(EnemyTurn());
-        }        
     }
 
     public void objectSelected(GameObject gameObject){

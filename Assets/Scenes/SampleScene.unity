@@ -1159,16 +1159,18 @@ MonoBehaviour:
   state: 0
   heroHud: {fileID: 1172238079}
   assistantHud: {fileID: 536242977}
-  enemyHud1: {fileID: 1549689179}
-  enemyHud2: {fileID: 0}
-  enemyHud3: {fileID: 0}
-  enemyHud4: {fileID: 0}
+  enemyHUDs:
+  - {fileID: 1549689179}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   heroUnit: {fileID: 396205789}
   assistantUnit: {fileID: 334832488}
-  enemyUnit1: {fileID: 2116783073}
-  enemyUnit2: {fileID: 0}
-  enemyUnit3: {fileID: 0}
-  enemyUnit4: {fileID: 0}
+  enemies:
+  - {fileID: 2116783073}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   dialogueText: {fileID: 1860785789}
 --- !u!4 &1549689178 stripped
 Transform:
@@ -1437,7 +1439,7 @@ GameObject:
   - component: {fileID: 2116783073}
   - component: {fileID: 2116783074}
   m_Layer: 8
-  m_Name: Slime
+  m_Name: BigBlob
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1674,7 +1676,7 @@ PrefabInstance:
     - target: {fileID: 3994676751443143834, guid: ab2c8cb73cbf378449b099ce79afa568,
         type: 3}
       propertyPath: m_Name
-      value: Hud
+      value: BigBlobHud
       objectReference: {fileID: 0}
     - target: {fileID: 3994676751930165676, guid: ab2c8cb73cbf378449b099ce79afa568,
         type: 3}
