@@ -6,7 +6,7 @@ using TMPro;
 
 public enum BattleState { START, PLAYERTURN, PUSHSELECT, ENEMYTURN, WON, LOST }
 
-public enum UnitType { HERO, ASSISTANT, BIGBLOB }
+//public enum UnitType { HERO, ASSISTANT, BIGBLOB }
 
 public class BattleSystem : MonoBehaviour
 {
@@ -15,22 +15,22 @@ public class BattleSystem : MonoBehaviour
     public BattleHud heroHud;
     public BattleHud assistantHud;
     public BattleHud enemyHud1;
-    /*public BattleHud enemyHud2;
+    public BattleHud enemyHud2;
     public BattleHud enemyHud3;
-    public BattleHud enemyHud4; */   
+    public BattleHud enemyHud4;  
 
-    Unit heroUnit;
+    public Unit heroUnit;
     public Unit assistantUnit;
     public Unit enemyUnit1;
-    /*public Unit enemyUnit2;
+    public Unit enemyUnit2;
     public Unit enemyUnit3;
-    public Unit enemyUnit4;*/
+    public Unit enemyUnit4;
 
     public DialogueBox dialogueText;
     //Game level. Tutorial is 0.
-    int level = 0;
+    //int level = 0;
     //Game turn.
-    int turn = 0;
+    //int turn = 0;
 
     // Start is called before the first frame update
     void Start(){
@@ -41,24 +41,21 @@ public class BattleSystem : MonoBehaviour
     IEnumerator SetupBattle(){      
         //TODO: Figure out how to receive this array externally or set up scenes so as to not need them.
         //First two setup allies, the rest are enemies.
-        UnitType[] unitTypes = {UnitType.HERO, UnitType.ASSISTANT, UnitType.BIGBLOB};
+        //UnitType[] unitTypes = {UnitType.HERO, UnitType.ASSISTANT, UnitType.BIGBLOB};
 
         //Initialise assistant object.
-        //GameObject assistantObject = Instantiate(assistantPrefab, assistantLocation);
-        //assistantUnit = assistantObject.GetComponent<Unit>();
         assistantHud.SetHUD(assistantUnit);
-
-        //TODO: Initialise hero object.
-
+        //Initialise hero object.
+        heroHud.SetHUD(heroUnit);
         //Initialise enemy objects
-        //GameObject enemyObject1 = Instantiate(enemyPrefab1, enemyLocation1);
-        //enemyUnit1 = enemyObject1.GetComponent<Unit>();
-        enemyHud1.SetHUD(enemyUnit1);
-        dialogueText.UpdateText("A "+enemyUnit1.unitName+" politely approaches.");       
-        //TODO: FOR each prefab != null initialise and add to list             
-        
-        //Wait 2 seconds.
-        yield return new WaitForSeconds(2f);
+        Unit[] enemies = {enemyUnit1, enemyUnit2, enemyUnit3, enemyUnit4};
+        BattleHud[] enemyHuds = {enemyHud1, enemyHud2, enemyHud3, enemyHud4};
+        for (int i = 0; i < enemies.Length && enemies[i] != null; i++){
+            enemyHuds[i].SetHUD(enemies[i]);
+            //TODO: Custom enemy walk in text
+            dialogueText.UpdateText("A "+enemies[i].unitName+" politely approaches.");  
+            yield return new WaitForSeconds(2f);    //Wait time should match enemy entrance text.
+        }        
         
         //Setup finished, change state
         state = BattleState.PLAYERTURN;
