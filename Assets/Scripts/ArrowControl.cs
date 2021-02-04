@@ -7,8 +7,10 @@ using TMPro;
 public class ArrowControl : MonoBehaviour
 {
     int pos = 1;
-    public GameObject arrow;
+    static float moveOne = 0.18f;
+    static float changeSide = moveOne*3; 
 
+    public GameObject arrow;
     public BattleSystem battleSystem; 
 
     void Update()
@@ -18,14 +20,14 @@ public class ArrowControl : MonoBehaviour
             if (pos == 1)
             {
                 Vector3 position = arrow.transform.position;
-                position.y = position.y - 3.3f;
+                position.y = position.y - changeSide;
                 arrow.transform.position = position;
                 pos = 4;
             }
             else
             {
                 Vector3 position = arrow.transform.position;
-                position.y = position.y + 1.1f;
+                position.y = position.y + moveOne;
                 arrow.transform.position = position;
                 pos--;
             }
@@ -36,14 +38,14 @@ public class ArrowControl : MonoBehaviour
             if (pos == 4)
             {
                 Vector3 position = arrow.transform.position;
-                position.y = position.y + 3.3f;
+                position.y = position.y + changeSide;
                 arrow.transform.position = position;
                 pos = 1;
             }
             else
             {
                 Vector3 position = arrow.transform.position;
-                position.y = position.y - 1.1f;
+                position.y = position.y - moveOne;
                 arrow.transform.position = position;
                 pos++;
             }
