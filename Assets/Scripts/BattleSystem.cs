@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum BattleState { START, PLAYERTURN, PUSHSELECT, ENEMYTURN, WON, LOST }
+public enum BattleState { START, PLAYERTURN, HEROTURN, ENEMYTURN, WON, LOST, PUSHSELECT }
 
 public enum Action { ATTACK, DEFEND, TAUNT }
 
@@ -40,7 +40,6 @@ public class BattleSystem : MonoBehaviour
         //Initialise hero object.
         heroHud.SetHUD(heroUnit);
         //Initialise enemy objects
-        //enemies = {enemyUnit1, enemyUnit2, enemyUnit3, enemyUnit4};
         List<Unit> livingEnemies = new List<Unit>();
         for (int i = 0; i < enemies.Length && enemies[i] != null; i++){
             livingEnemies.Add(enemies[i]);
@@ -51,7 +50,7 @@ public class BattleSystem : MonoBehaviour
         }
         enemies = livingEnemies.ToArray();     
         
-        //Setup finished, change state
+        //Setup finished, change state TODO: Maybe create nextTurn() function
         state = BattleState.PLAYERTURN;
         PlayerTurn();
     }
@@ -59,41 +58,66 @@ public class BattleSystem : MonoBehaviour
 //////////////////////////////////////////////TURN FUNCTIONS//////////////////////////////////////////////
 
     void PlayerTurn(){
-        //TODO: Get intent from each enemy.
-        dialogueText.UpdateText(battleScript.getHeroIntent());
+        battleScript.runTurn();
+        dialogueText.UpdateText(battleScript.getTurnIntent());
         dialogueText.UpdateText("Your time to act!");
         //The game does nothing during our turn, moving on only through inputs.
     }
 
     IEnumerator HeroTurn(){
-        //heroUnit.decideAction();
-        dialogueText.UpdateText(enemies[0].unitName+" attacks!");
-        yield return new WaitForSeconds(1f);
-        bool isDead = assistantUnit.TakeDamage(enemies[0].damage);
-        assistantHud.SetHP(assistantUnit.currentHP);
+        Action action = battleScript.getHeroAction();
+        bool isDead = false;
+        if(action == Action.ATTACK){
+            dialogueText.UpdateText(heroUnit.unitName+" attacks!");
+            yield return new WaitForSeconds(1f);
+            isDead = enemies[0].TakeDamage(heroUnit.damage);
+            enemyHUDs[0].SetHP(enemies[0].currentHP);
+        }else if (action == Action.DEFEND){
+            dialogueText.UpdateText(heroUnit.unitName+" defends!");
+            yield return new WaitForSeconds(1f);
+        }else if (action == Action.TAUNT){
+            dialogueText.UpdateText(heroUnit.unitName+" taunts!");
+            yield return new WaitForSeconds(1f);
+        }
         yield return new WaitForSeconds(1f);
         if(isDead){
-            state = BattleState.LOST;
+            state = BattleState.WON;
             EndBattle();
         }else{
-            state = BattleState.PLAYERTURN;
-            PlayerTurn();
+            state = BattleState.ENEMYTURN;
+            StartCoroutine(EnemyTurn());
         }        
     }
 
     IEnumerator EnemyTurn(){
-        dialogueText.UpdateText(enemies[0].unitName+" attacks!");
-        yield return new WaitForSeconds(1f);
-        bool isDead = assistantUnit.TakeDamage(enemies[0].damage);
-        assistantHud.SetHP(assistantUnit.currentHP);
-        yield return new WaitForSeconds(1f);
-        if(isDead){
-            state = BattleState.LOST;
-            EndBattle();
-        }else{
+        List<Action> actions = battleScript.getEnemyActions();
+        bool isDead = false;
+        for (int i = 0; i < enemies.Length; i++){
+            Action action = actions[i];
+            if(action == Action.ATTACK){
+                dialogueText.UpdateText(enemies[i].unitName+" attacks!");
+                yield return new WaitForSeconds(1f);
+                isDead = assistantUnit.TakeDamage(enemies[0].damage);
+                assistantHud.SetHP(assistantUnit.currentHP);
+            }else if (action == Action.DEFEND){
+                dialogueText.UpdateText(enemies[i].unitName+" defends!");
+                yield return new WaitForSeconds(1f);
+            }else if (action == Action.TAUNT){
+                dialogueText.UpdateText(enemies[i].unitName+" taunts!");
+                yield return new WaitForSeconds(1f);
+            }
+            if(isDead){
+                state = BattleState.LOST;
+                EndBattle();
+            }
+        }
+        if(!isDead){
+            //End of turn.
+            dialogueText.UpdateText(battleScript.getTurnOutcome());   
             state = BattleState.PLAYERTURN;
             PlayerTurn();
-        }       
+        }
+         
     }
 
     void EndBattle(){
@@ -110,7 +134,7 @@ public class BattleSystem : MonoBehaviour
     IEnumerator PlayerAttack(){
         bool isDead = enemies[0].TakeDamage(assistantUnit.damage);
         enemyHUDs[0].SetHP(enemies[0].currentHP);
-        dialogueText.UpdateText(enemies[0].unitName+" has just taken "+assistantUnit.damage+" damage!");
+        dialogueText.UpdateText(new List<string>(1){enemies[0].unitName+" has just taken "+assistantUnit.damage+" damage!"});
         //Wait
         yield return new WaitForSeconds(2f);
         
@@ -118,8 +142,8 @@ public class BattleSystem : MonoBehaviour
             state = BattleState.WON;
             EndBattle();
         }else{
-            state = BattleState.ENEMYTURN;
-            StartCoroutine(EnemyTurn());
+            state = BattleState.HEROTURN;
+            StartCoroutine(HeroTurn());
         }      
     }
 

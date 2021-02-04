@@ -1588,8 +1588,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitName: Big Blob
   damage: 7
-  maxHP: 2
-  currentHP: 2
+  maxHP: 20
+  currentHP: 20
 --- !u!223 &2116783074
 Canvas:
   m_ObjectHideFlags: 0

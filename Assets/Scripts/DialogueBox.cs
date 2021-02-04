@@ -12,9 +12,17 @@ public class DialogueBox : MonoBehaviour
     
     private Queue<string> messages = new Queue<string>();
 
+    public void UpdateText(List<string> m){
+        //Receive lists.
+        foreach (string s in m){
+            UpdateText(s);
+        }
+        //TODO: Make sure this iterator does not make multiple coroutines start simultaneously.
+    }
+
     public void UpdateText(string m){
         //Must wait for message to finish before starting next one.
-        messages.Enqueue(m);
+        messages.Enqueue(m);        
         if(!typing)
             StartCoroutine("TypeText");
     }
