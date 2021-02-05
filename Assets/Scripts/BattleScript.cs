@@ -14,6 +14,10 @@ public class BattleScript{
     List<Action> actions = new List<Action>();
     List<string> outcomes = new List<string>();
 
+    public void playerAction(Action playerAction){
+        //TODO: runTurn again but with action in mind.
+    }
+
     public void runTurn(){
         intents.Clear();
         actions.Clear();

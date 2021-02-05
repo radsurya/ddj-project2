@@ -19,8 +19,8 @@ public class ArrowControl : MonoBehaviour
     
     void Update()
     {
-        if(!battleSystem.isInputAllowed() || battleSystem.getCurrentAction() != Action.SKIP){
-            //Ignore input during text display.
+        if(!battleSystem.isInputAllowed() || battleSystem.isSelectAllowed()){
+            //Ignore input during text display or mouse selection.
             return;
         }
         arrow.GetComponent<SpriteRenderer>().enabled = true;

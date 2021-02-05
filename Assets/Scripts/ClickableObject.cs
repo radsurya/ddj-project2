@@ -9,7 +9,7 @@ public class ClickableObject : MonoBehaviour
     public BattleSystem battleSystem;
 
     public void OnMouseEnter(){
-        if(battleSystem.isInputAllowed() && battleSystem.getCurrentAction() != Action.SKIP)
+        if(battleSystem.isInputAllowed() && battleSystem.isSelectAllowed())
             battleSystem.selectArrowController.SetArrow(gameObject.transform.position);
         //Alternatively, use OnMouseOver() and check if arrow is active, but that's a lot of calls.
     }
@@ -22,7 +22,7 @@ public class ClickableObject : MonoBehaviour
     {
         //If clicked on an object, send it to BattleSystem.
         if (Input.GetMouseButtonDown(0) 
-            && battleSystem.isInputAllowed() && battleSystem.getCurrentAction() != Action.SKIP)
+            && battleSystem.isInputAllowed() && battleSystem.isSelectAllowed())
         {
             battleSystem.objectSelected(this.gameObject);
         }

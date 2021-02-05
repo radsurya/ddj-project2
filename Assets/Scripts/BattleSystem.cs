@@ -155,9 +155,9 @@ public class BattleSystem : MonoBehaviour
     IEnumerator PlayerPushAction(Unit target)
     {
         dialogueText.forceDialogueAdvance("You pushed "+target.name+".");
+        battleScript.playerAction(currentAction);
         //Wait
         yield return new WaitForSeconds(0f);
-        currentAction = Action.SKIP;
         changeState();
     }
 
@@ -247,12 +247,8 @@ public class BattleSystem : MonoBehaviour
             return; //Input disabled whilst typing.
         }*/
         if(currentAction == Action.PUSH){
-            //Picks up current object position and sends it to Arrow.
-            selectArrowController.SetArrow(gameObject.transform.position);
-
             Debug.Log(gameObject.ToString()+" pushed!");
             StartCoroutine(PlayerPushAction(gameObject.GetComponent<Unit>()));
-
         }
     }
 
@@ -260,6 +256,7 @@ public class BattleSystem : MonoBehaviour
     private void changeState(){
         switch (state){
             case BattleState.PLAYERTURN:
+                currentAction = Action.SKIP;    //Reset current action.
                 state = BattleState.HEROTURN;
                 StartCoroutine(HeroTurn());
                 break;
@@ -280,11 +277,14 @@ public class BattleSystem : MonoBehaviour
         //Could check health of all units and decide if game end that way.
     }
 
+    /*Whether input is allowed.*/
     public bool isInputAllowed(){
         return dialogueText.isIdle() && state == BattleState.PLAYERTURN;
     }
 
-    public Action getCurrentAction(){
-        return currentAction;
+    /*Whether mouse selection is allowed.*/
+    public bool isSelectAllowed(){
+        return currentAction == Action.HIDE || currentAction == Action.STOP 
+        || currentAction == Action.PUSH || currentAction == Action.ITEM;
     }
 }
