@@ -19,6 +19,9 @@ public class BattleSystem : MonoBehaviour
     public Unit assistantUnit;
     public Unit[] enemies = new Unit[4];
 
+
+    
+
     public DialogueBox dialogueText;
 
     private BattleScript battleScript = new BattleScript();  
@@ -144,9 +147,13 @@ public class BattleSystem : MonoBehaviour
 
     //TODO: Check if waiting truly makes sense in the following functions.
 
-    IEnumerator PlayerHideAction()
+    IEnumerator PlayerHideAction(targetObject target)
     {
-        dialogueText.forceDialogueAdvance("You Hide!");
+        dialogueText.forceDialogueAdvance("You Hide behind the " + target.name + ".");
+        battleScript.playerAction(currentAction);
+
+        assistantUnit.transform.position = target.transform.position; 
+
         //Wait
         yield return new WaitForSeconds(0f);
         changeState();
@@ -195,7 +202,8 @@ public class BattleSystem : MonoBehaviour
     public void OnHideButton(){
         if(state == BattleState.PLAYERTURN){
             //Select target
-            StartCoroutine(PlayerHideAction());
+            currentAction = Action.HIDE;
+            dialogueText.forceDialogueAdvance("Select somethin to hide behind");
 
         }else if(state == BattleState.ENEMYTURN){
 
@@ -249,6 +257,10 @@ public class BattleSystem : MonoBehaviour
         if(currentAction == Action.PUSH){
             Debug.Log(gameObject.ToString()+" pushed!");
             StartCoroutine(PlayerPushAction(gameObject.GetComponent<Unit>()));
+        } else if(currentAction == Action.HIDE)
+        {
+            Debug.Log(gameObject.ToString() + " selected to hide!");
+            StartCoroutine(PlayerHideAction(gameObject.GetComponent<targetObject>()));
         }
     }
 
