@@ -425,7 +425,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 334832482}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4b4ae42f26d99ac40b9229dd03ae3e3b, type: 3}
+  m_Script: {fileID: 11500000, guid: de1050a4333a5c546b5a936bba7b43de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   battleSystem: {fileID: 1223459579}
@@ -689,7 +689,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 396205783}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4b4ae42f26d99ac40b9229dd03ae3e3b, type: 3}
+  m_Script: {fileID: 11500000, guid: de1050a4333a5c546b5a936bba7b43de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   battleSystem: {fileID: 1223459579}
@@ -806,12 +806,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 458069280}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.061, y: 0.53, z: 0}
-  m_LocalScale: {x: 0.04981645, y: 0.04691632, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 124.13668, y: 246.4141, z: -29905.137}
+  m_LocalScale: {x: 14.944933, y: 14.074895, z: 299.99997}
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_Father: {fileID: 978760904}
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &458069284
 MonoBehaviour:
@@ -1178,6 +1178,7 @@ RectTransform:
   - {fileID: 2116783070}
   - {fileID: 396205786}
   - {fileID: 145113514}
+  - {fileID: 458069283}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1474,6 +1475,7 @@ GameObject:
   - component: {fileID: 1860785786}
   - component: {fileID: 1860785788}
   - component: {fileID: 1860785787}
+  - component: {fileID: 1860785790}
   - component: {fileID: 1860785789}
   m_Layer: 5
   m_Name: DialogueBoxText
@@ -1498,8 +1500,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.26635742, y: -0.30394745}
-  m_SizeDelta: {x: 515.83167, y: 203.08887}
+  m_AnchoredPosition: {x: 0.2135, y: -0.2752}
+  m_SizeDelta: {x: 465.8031, y: 177.712}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1860785787
 MonoBehaviour:
@@ -1521,7 +1523,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Insert dialogue here...
+  m_text: Click to advance dialogue.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1548,8 +1550,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 40
-  m_fontSizeBase: 40
+  m_fontSize: 30
+  m_fontSizeBase: 30
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 35
@@ -1584,7 +1586,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 1
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 6.847705, y: 0, z: 49.907658, w: 27.833101}
+  m_margin: {x: 6.847705, y: 0, z: 0.60412264, w: -1.894059}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -1611,6 +1613,32 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dialogueText: {fileID: 1860785787}
+--- !u!61 &1860785790
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1860785785}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 10.51326, y: 2.1751328}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 487.50998, y: 198.21419}
+  m_EdgeRadius: 0
 --- !u!1 &2116783067
 GameObject:
   m_ObjectHideFlags: 0
@@ -1759,7 +1787,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2116783067}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4b4ae42f26d99ac40b9229dd03ae3e3b, type: 3}
+  m_Script: {fileID: 11500000, guid: de1050a4333a5c546b5a936bba7b43de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   battleSystem: {fileID: 1223459579}
