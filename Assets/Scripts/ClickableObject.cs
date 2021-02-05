@@ -7,6 +7,12 @@ using TMPro;
 public class ClickableObject : MonoBehaviour
 {
     public BattleSystem battleSystem;
+    public string unitName;
+
+    public string hideString;
+    public string stopString;
+    public string pushString;
+    public string itemString;
 
     public void OnMouseEnter(){
         if(battleSystem.isInputAllowed() && battleSystem.isSelectAllowed())
@@ -24,7 +30,7 @@ public class ClickableObject : MonoBehaviour
         if (Input.GetMouseButtonDown(0) 
             && battleSystem.isInputAllowed() && battleSystem.isSelectAllowed())
         {
-            battleSystem.objectSelected(this.gameObject);
+            battleSystem.objectSelected(this);
         }
     }
 }

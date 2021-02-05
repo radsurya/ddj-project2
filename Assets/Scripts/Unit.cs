@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Unit : MonoBehaviour
+public abstract class Unit : ClickableObject
 {
-    public string unitName;
 
     public int damage;
 	public int maxHP;

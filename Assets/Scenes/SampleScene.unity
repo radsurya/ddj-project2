@@ -290,7 +290,6 @@ GameObject:
   - component: {fileID: 334832484}
   - component: {fileID: 334832483}
   - component: {fileID: 334832486}
-  - component: {fileID: 334832487}
   - component: {fileID: 334832488}
   m_Layer: 8
   m_Name: Assistant
@@ -416,19 +415,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.9351921, y: 1.824685}
   m_EdgeRadius: 0
---- !u!114 &334832487
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 334832482}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: de1050a4333a5c546b5a936bba7b43de, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  battleSystem: {fileID: 1223459579}
 --- !u!114 &334832488
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -441,7 +427,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06580753b7ee5d14fbbf937fbd2a8684, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  battleSystem: {fileID: 1223459579}
   unitName: Assistant
+  hideString: You attempted to hide behind yourself. Also known as turning around.
+  stopString: You stopped yourself from acting, including stopping yourself, so I
+    guess you didn't really stop yourself.
+  pushString: You pushed yourself forward, and the fear pushed you backward, so you
+    ended up exactly where you were.
+  itemString: You used your "Glasses" item! You now have glasses! You also had some
+    before, so it doesn't make much of a difference.
   damage: 1
   maxHP: 10
   currentHP: 10
@@ -554,7 +548,6 @@ GameObject:
   - component: {fileID: 396205785}
   - component: {fileID: 396205784}
   - component: {fileID: 396205787}
-  - component: {fileID: 396205788}
   - component: {fileID: 396205789}
   m_Layer: 8
   m_Name: Hero
@@ -680,19 +673,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 2.1218102, y: 3.2247815}
   m_EdgeRadius: 0
---- !u!114 &396205788
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 396205783}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: de1050a4333a5c546b5a936bba7b43de, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  battleSystem: {fileID: 1223459579}
 --- !u!114 &396205789
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -705,7 +685,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 550b0abd165a606469b55111a47df25b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  battleSystem: {fileID: 1223459579}
   unitName: Hero
+  hideString: You hid behind the Hero! A good idea, half the time. When he's facing
+    the other way.
+  stopString: You stopped the Hero from acting agains your interests!
+  pushString: You pushed the Hero! You're not sure he felt it, but it seems he's
+    changed targets!
+  itemString: You intended to use an item on the Hero, but his sheer heroism made
+    you forget you have no items.
   damage: 10
   maxHP: 100
   currentHP: 100
@@ -1094,7 +1082,6 @@ GameObject:
   - component: {fileID: 800700512}
   - component: {fileID: 800700514}
   - component: {fileID: 800700515}
-  - component: {fileID: 800700516}
   m_Layer: 0
   m_Name: rock
   m_TagString: Untagged
@@ -1180,6 +1167,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   battleSystem: {fileID: 1223459579}
+  unitName: Rock
+  hideString: You hid behind a rock. It is blob-proof.
+  stopString: You stopped the rock from moving! Thank goodness.
+  pushString: You pushed a rock! Sisyphus would be proud.
+  itemString: You intended to use an item on this rock, but your rocky relationship
+    didn't allow it.
 --- !u!61 &800700515
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1206,19 +1199,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 5.12, y: 5.12}
   m_EdgeRadius: 0
---- !u!114 &800700516
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 800700511}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fceb656be6f63ff42954dcfbf1a51e3e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  unitName: Rock
 --- !u!1 &978760900
 GameObject:
   m_ObjectHideFlags: 0
@@ -1789,7 +1769,6 @@ GameObject:
   - component: {fileID: 2116783069}
   - component: {fileID: 2116783068}
   - component: {fileID: 2116783071}
-  - component: {fileID: 2116783072}
   - component: {fileID: 2116783073}
   - component: {fileID: 2116783074}
   m_Layer: 8
@@ -1916,19 +1895,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.52558255, y: 0.6790266}
   m_EdgeRadius: 0
---- !u!114 &2116783072
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2116783067}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: de1050a4333a5c546b5a936bba7b43de, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  battleSystem: {fileID: 1223459579}
 --- !u!114 &2116783073
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1941,7 +1907,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18ff3a7b9979b7645a09ba1336b3d231, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  battleSystem: {fileID: 1223459579}
   unitName: Big Blob
+  hideString: You attempted to hide behind the Big Blob. Turns out its eyes can see
+    through blob and behind itself.
+  stopString: You attempted to stop the blob from acting, but then you realised the
+    Hero's more persuasive than you right now. Dangerously persuasive.
+  pushString: You attempted to push the Big Blob. You pushed your way inside! And
+    now can't move.
+  itemString: You attempted to use and item on the Big Blob, but you fear it would
+    blob it up.
   damage: 7
   maxHP: 20
   currentHP: 20

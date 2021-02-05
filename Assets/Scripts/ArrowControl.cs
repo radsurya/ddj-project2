@@ -66,16 +66,16 @@ public class ArrowControl : MonoBehaviour
             switch (pos)
             {
                 case 1: //HIDE
-                    battleSystem.OnHideButton();
+                    battleSystem.OnHideButton();//Debug.Log("HIDE");
                     break;
                 case 2: //STOP
-                    battleSystem.OnStopButton();
+                    battleSystem.OnStopButton();//Debug.Log("STOP");
                     break;
                 case 3: //PUSH
-                    battleSystem.OnPushButton();                  
+                    battleSystem.OnPushButton();  //Debug.Log("PUSH");                
                     break;
                 case 4: //ITEM
-                    battleSystem.OnItemButton();                 
+                    battleSystem.OnItemButton();  //Debug.Log("ITEM");               
                     break;
             }
         }

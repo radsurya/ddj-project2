@@ -66,7 +66,6 @@ public class BattleSystem : MonoBehaviour
     }
 
     IEnumerator HeroTurn(){
-        Action action = battleScript.getHeroAction();
         bool isDead = false;
         yield return StartCoroutine(processGenericAction(battleScript.getHeroAction(), heroUnit, enemies[0], 
             enemyHUDs[0], boolean => isDead = boolean));
@@ -147,10 +146,10 @@ public class BattleSystem : MonoBehaviour
 
     //TODO: Check if waiting truly makes sense in the following functions.
 
-    IEnumerator PlayerHideAction(targetObject target)
+    IEnumerator PlayerHideAction(ClickableObject target)
     {
-        dialogueText.forceDialogueAdvance("You Hide behind the " + target.name + ".");
-        battleScript.playerAction(currentAction);
+        dialogueText.forceDialogueAdvance(target.hideString);
+        battleScript.runTurn(currentAction,target.unitName);
 
         assistantUnit.transform.position = target.transform.position; 
 
@@ -159,26 +158,28 @@ public class BattleSystem : MonoBehaviour
         changeState();
     }
 
-    IEnumerator PlayerPushAction(Unit target)
+    IEnumerator PlayerPushAction(ClickableObject target)
     {
-        dialogueText.forceDialogueAdvance("You pushed "+target.name+".");
-        battleScript.playerAction(currentAction);
+        dialogueText.forceDialogueAdvance(target.pushString);
+        battleScript.runTurn(currentAction,target.unitName);
         //Wait
         yield return new WaitForSeconds(0f);
         changeState();
     }
 
-    IEnumerator PlayerStopAction()
+    IEnumerator PlayerStopAction(ClickableObject target)
     {
-        dialogueText.forceDialogueAdvance("You Stop!");
+        dialogueText.forceDialogueAdvance(target.stopString);
+        battleScript.runTurn(currentAction,target.unitName);
         //Wait
         yield return new WaitForSeconds(0f);
         changeState();
     }
 
-    IEnumerator PlayerUseItemAction()
+    IEnumerator PlayerUseItemAction(ClickableObject target)
     {
-        dialogueText.forceDialogueAdvance("You use a Item!");
+        dialogueText.forceDialogueAdvance(target.itemString);
+        battleScript.runTurn(currentAction,target.unitName);
         //Wait
         yield return new WaitForSeconds(0f);
         changeState();
@@ -186,6 +187,7 @@ public class BattleSystem : MonoBehaviour
 
 //////////////////////////////////////////////BUTTON SELECTED//////////////////////////////////////////////
 
+    //Deprecated: This button does not exist, and this action is not necessary.
     public void OnAttackButton(){
         //Debug.Log("Button clicked!");
         if(state == BattleState.PLAYERTURN){
@@ -198,69 +200,63 @@ public class BattleSystem : MonoBehaviour
 
         }*/
     }
-
+    //TODO: The if's may be unecessary, but are better left in, for safety.
     public void OnHideButton(){
         if(state == BattleState.PLAYERTURN){
-            //Select target
+            //Sets flag and waits for target selection.
             currentAction = Action.HIDE;
-            dialogueText.forceDialogueAdvance("Select somethin to hide behind");
+            dialogueText.forceDialogueAdvance("Select something to hide behind.");
 
-        }else if(state == BattleState.ENEMYTURN){
-
-        }/*else if(state == BattleState.HEROTURN){
-
-        }*/
+        }
     }
 
     public void OnPushButton(){
         if(state == BattleState.PLAYERTURN){
             //Sets flag and waits for target selection.
             currentAction = Action.PUSH;
-            dialogueText.forceDialogueAdvance("Select your target.");
+            dialogueText.forceDialogueAdvance("Select something to push.");
         }
     }
 
     public void OnStopButton(){
         if(state == BattleState.PLAYERTURN){
-            //Select target
-            StartCoroutine(PlayerStopAction());
-
-        }else if(state == BattleState.ENEMYTURN){
-
-        }/*else if(state == BattleState.HEROTURN){
-
-        }*/
+            //Sets flag and waits for target selection.
+            currentAction = Action.STOP;
+            dialogueText.forceDialogueAdvance("Select something to stop.");
+        }
     }
 
     public void OnItemButton(){
         if(state == BattleState.PLAYERTURN){
-            //Select target
-            StartCoroutine(PlayerUseItemAction());
-
-        }else if(state == BattleState.ENEMYTURN){
-
-        }/*else if(state == BattleState.HEROTURN){
-
-        }*/
+            //Sets flag and waits for target selection.
+            currentAction = Action.ITEM;
+            dialogueText.forceDialogueAdvance("Select something to use an item on.");
+            //TODO: Potentially implement an item select, though I expect that will never be done before the 8th
+        }
     }
 
 //////////////////////////////////////////////AUXILARY FUNCTIONS//////////////////////////////////////////////
 
     public selectedObjectArrowController selectArrowController;
 
-    public void objectSelected(GameObject gameObject){
+    public void objectSelected(ClickableObject clickedObject){
         //Clickable objects can self determine this.
         /*if(!isInputAllowed()){            
             Debug.Log("Input disabled whilst typing");
             return; //Input disabled whilst typing.
         }*/
         if(currentAction == Action.PUSH){
-            Debug.Log(gameObject.ToString()+" pushed!");
-            StartCoroutine(PlayerPushAction(gameObject.GetComponent<Unit>()));
-        } else if(currentAction == Action.HIDE)
-        {
+            Debug.Log(gameObject.ToString()+" selected to push!");
+            StartCoroutine(PlayerPushAction(clickedObject));
+        } else if(currentAction == Action.HIDE){
             Debug.Log(gameObject.ToString() + " selected to hide!");
-            StartCoroutine(PlayerHideAction(gameObject.GetComponent<targetObject>()));
+            StartCoroutine(PlayerHideAction(clickedObject));
+        } else if(currentAction == Action.STOP){
+            Debug.Log(gameObject.ToString() + " selected to stop!");
+            StartCoroutine(PlayerStopAction(clickedObject));
+        } else if(currentAction == Action.ITEM){
+            Debug.Log(gameObject.ToString() + " selected to use item!");
+            StartCoroutine(PlayerUseItemAction(clickedObject));
         }
     }
 
