@@ -21,7 +21,7 @@ public class BattleScript{
         if(!heroStuck){
             //hero
             intents.Add("The Hero prepares to slash the Big Blob.");
-            actions.Add(Action.ATTACK);
+            actions.Add(Action.SKIP);
             heroStuck = true;
             deadTurn = 0; //Each flag/fase set resets the dead turn.
             outcomes.Add("Hero: “Take this, you big blob!”");
@@ -32,7 +32,7 @@ public class BattleScript{
             outcomes.Add("...Well, no matter! Let me just… try to… drag it out of there…”");
             //enemy
             intents.Add("The Big Blob bobbles menacingly.");
-            actions.Add(Action.TAUNT);
+            actions.Add(Action.SKIP);
             outcomes.Add("The Big Blob nonchalantly bobbles the sword around.");
         }else{
             //hero

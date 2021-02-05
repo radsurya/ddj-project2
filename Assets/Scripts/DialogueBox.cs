@@ -57,4 +57,17 @@ public class DialogueBox : MonoBehaviour
             }
         }
     }
+
+    public void forceDialogueAdvance(){        
+        if(messages.Count > 0){
+            //TODO: Check if calling this with no coroutine is safe.
+            StopCoroutine("TypeText");  
+            StartCoroutine("TypeText");
+        }
+    }
+
+    /*Function for identifying if dialogue box has no further tasks.*/
+    public bool isIdle(){
+        return messages.Count <= 0 && !typing; 
+    }
 }

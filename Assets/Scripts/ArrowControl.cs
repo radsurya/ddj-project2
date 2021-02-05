@@ -15,6 +15,10 @@ public class ArrowControl : MonoBehaviour
 
     void Update()
     {
+        if(!battleSystem.dialogueText.isIdle()){
+            //Ignore input during text display.
+            return;
+        }        
         if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
         {
             if (pos == 1)
@@ -69,10 +73,5 @@ public class ArrowControl : MonoBehaviour
                     break;
             }
         }
-        //TODO: Implement instant text display.
-        /*if (Input.GetKeyDown(KeyCode.A))
-        {
-            lettertime = 0f;
-        }*/
     }
 }

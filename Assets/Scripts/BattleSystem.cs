@@ -4,7 +4,7 @@ using UnityEngine;
 
 public enum BattleState { START, PLAYERTURN, HEROTURN, ENEMYTURN, WON, LOST, PUSHSELECT }
 
-public enum Action { ATTACK, DEFEND, TAUNT }
+public enum Action { ATTACK, DEFEND, TAUNT, IDLE, SKIP }
 
 public class BattleSystem : MonoBehaviour
 {
@@ -50,16 +50,13 @@ public class BattleSystem : MonoBehaviour
         }
         enemies = livingEnemies.ToArray();     
         
-        //Setup finished, change state TODO: Maybe create nextTurn() function
-        state = BattleState.PLAYERTURN;
-        PlayerTurn();
+        //Setup finished, change state
+        changeState();
     }
 
 //////////////////////////////////////////////TURN FUNCTIONS//////////////////////////////////////////////
 
     void PlayerTurn(){
-        battleScript.runTurn();
-        dialogueText.UpdateText(battleScript.getTurnIntent());
         dialogueText.UpdateText("Your time to act!");
         //The game does nothing during our turn, moving on only through inputs.
     }
@@ -67,25 +64,14 @@ public class BattleSystem : MonoBehaviour
     IEnumerator HeroTurn(){
         Action action = battleScript.getHeroAction();
         bool isDead = false;
-        if(action == Action.ATTACK){
-            dialogueText.UpdateText(heroUnit.unitName+" attacks!");
-            yield return new WaitForSeconds(1f);
-            isDead = enemies[0].TakeDamage(heroUnit.damage);
-            enemyHUDs[0].SetHP(enemies[0].currentHP);
-        }else if (action == Action.DEFEND){
-            dialogueText.UpdateText(heroUnit.unitName+" defends!");
-            yield return new WaitForSeconds(1f);
-        }else if (action == Action.TAUNT){
-            dialogueText.UpdateText(heroUnit.unitName+" taunts!");
-            yield return new WaitForSeconds(1f);
-        }
-        yield return new WaitForSeconds(1f);
+        yield return StartCoroutine(processGenericAction(battleScript.getHeroAction(), heroUnit, enemies[0], 
+            enemyHUDs[0], boolean => isDead = boolean));
+        //yield return new WaitForSeconds(1f);
         if(isDead){
             state = BattleState.WON;
             EndBattle();
         }else{
-            state = BattleState.ENEMYTURN;
-            StartCoroutine(EnemyTurn());
+            changeState();
         }        
     }
 
@@ -93,19 +79,9 @@ public class BattleSystem : MonoBehaviour
         List<Action> actions = battleScript.getEnemyActions();
         bool isDead = false;
         for (int i = 0; i < enemies.Length; i++){
-            Action action = actions[i];
-            if(action == Action.ATTACK){
-                dialogueText.UpdateText(enemies[i].unitName+" attacks!");
-                yield return new WaitForSeconds(1f);
-                isDead = assistantUnit.TakeDamage(enemies[0].damage);
-                assistantHud.SetHP(assistantUnit.currentHP);
-            }else if (action == Action.DEFEND){
-                dialogueText.UpdateText(enemies[i].unitName+" defends!");
-                yield return new WaitForSeconds(1f);
-            }else if (action == Action.TAUNT){
-                dialogueText.UpdateText(enemies[i].unitName+" taunts!");
-                yield return new WaitForSeconds(1f);
-            }
+            yield return StartCoroutine(processGenericAction(actions[i], enemies[i], assistantUnit, 
+                assistantHud, boolean => isDead = boolean));
+            //yield return new WaitForSeconds(1f);
             if(isDead){
                 state = BattleState.LOST;
                 EndBattle();
@@ -113,15 +89,11 @@ public class BattleSystem : MonoBehaviour
         }
         if(!isDead){
             //End of turn.
-            dialogueText.UpdateText(battleScript.getTurnOutcome());   
-            state = BattleState.PLAYERTURN;
-            PlayerTurn();
-        }
-         
+            changeState();
+        }         
     }
 
     void EndBattle(){
-        //We could check state for safety
         if(state == BattleState.WON){
             dialogueText.UpdateText("You have survived yet another ordeal!");
         }else if (state == BattleState.LOST){
@@ -131,10 +103,33 @@ public class BattleSystem : MonoBehaviour
 
 //////////////////////////////////////////////PROCESS ACTIONS//////////////////////////////////////////////
 
+    /*Processes generic actions and returns whether target was killed with callback.*/
+    IEnumerator processGenericAction(Action action, Unit myself, Unit target, BattleHud targetHud,
+        System.Action<bool> callbackOnFinish){
+        
+        bool isDead = false;
+        if(action == Action.ATTACK){
+                dialogueText.UpdateText(myself.unitName+" attacks!");
+                yield return new WaitForSeconds(1f);
+                isDead = target.TakeDamage(myself.damage);
+                targetHud.SetHP(target.currentHP);
+            }else if (action == Action.DEFEND){
+                dialogueText.UpdateText(myself.unitName+" defends!");
+                //yield return new WaitForSeconds(1f);
+            }else if (action == Action.TAUNT){
+                dialogueText.UpdateText(myself.unitName+" taunts!");
+                //yield return new WaitForSeconds(1f);
+            }else if (action == Action.IDLE){
+                dialogueText.UpdateText(myself.unitName+" does absolutely nothing!");
+                //yield return new WaitForSeconds(1f);
+            }//else SKIP
+        callbackOnFinish(isDead);   //Calls a function so as to return this result.
+    }
+
     IEnumerator PlayerAttackAction(){
         bool isDead = enemies[0].TakeDamage(assistantUnit.damage);
         enemyHUDs[0].SetHP(enemies[0].currentHP);
-        dialogueText.UpdateText(new List<string>(1){enemies[0].unitName+" has just taken "+assistantUnit.damage+" damage!"});
+        dialogueText.UpdateText(enemies[0].unitName+" has just taken "+assistantUnit.damage+" damage!");
         //Wait
         yield return new WaitForSeconds(2f);
         
@@ -142,44 +137,52 @@ public class BattleSystem : MonoBehaviour
             state = BattleState.WON;
             EndBattle();
         }else{
-            state = BattleState.HEROTURN;
-            StartCoroutine(HeroTurn());
+            changeState();
         }      
     }
 
+    //TODO: Check if waiting truly makes sense in the following functions.
 
     IEnumerator PlayerHideAction()
     {
-        dialogueText.UpdateText(new List<string>(1) { " You Hide!" });
+        dialogueText.UpdateText("You Hide!");
+        dialogueText.forceDialogueAdvance();
         //Wait
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(0f);
+        changeState();
     }
 
     IEnumerator PlayerPushAction()
     {
-        dialogueText.UpdateText(new List<string>(1) { " You Push!" });
+        dialogueText.UpdateText("You Push!");
+        dialogueText.forceDialogueAdvance();
         //Wait
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(0f);
+        changeState();
     }
 
     IEnumerator PlayerStopAction()
     {
-        dialogueText.UpdateText(new List<string>(1) { " You Stop!" });
+        dialogueText.UpdateText("You Stop!");
+        dialogueText.forceDialogueAdvance();
         //Wait
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(0f);
+        changeState();
     }
 
     IEnumerator PlayerUseItemAction()
     {
-        dialogueText.UpdateText(new List<string>(1) { " You use a Item!" });
+        dialogueText.UpdateText("You use a Item!");
+        dialogueText.forceDialogueAdvance();
         //Wait
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(0f);
+        changeState();
     }
 
-    //////////////////////////////////////////////BUTTON SELECTED//////////////////////////////////////////////
+//////////////////////////////////////////////BUTTON SELECTED//////////////////////////////////////////////
 
     public void OnAttackButton(){
-        Debug.Log("Button clicked!");
+        //Debug.Log("Button clicked!");
         if(state == BattleState.PLAYERTURN){
             //Select target
             StartCoroutine(PlayerAttackAction());
@@ -207,7 +210,7 @@ public class BattleSystem : MonoBehaviour
         if(state == BattleState.PLAYERTURN){
             //Select target
             state = BattleState.PUSHSELECT;
-            //StartCoroutine(PlayerAttack());
+            StartCoroutine(PlayerPushAction());
 
         }else if(state == BattleState.ENEMYTURN){
 
@@ -240,14 +243,43 @@ public class BattleSystem : MonoBehaviour
         }*/
     }
 
+//////////////////////////////////////////////AUXILARY FUNCTIONS//////////////////////////////////////////////
+
     public selectedObjectArrowController selectArrowController;
 
     public void objectSelected(GameObject gameObject){
-        if(state == BattleState.PUSHSELECT){
-
-            Vector3 objectPos = gameObject.transform.position;
-            selectArrowController.SetArrow(objectPos);
-            Debug.Log(gameObject.ToString()+" selected!");
+        if(!dialogueText.isIdle()){            
+            Debug.Log("Input disabled whilst typing");
+            return; //Input disabled whilst typing.
         }
+        if(state == BattleState.PUSHSELECT){
+            Vector3 objectPos = gameObject.transform.position;
+            selectArrowController.SetArrow(objectPos);        
+            Debug.Log(gameObject.ToString()+" pushed!");
+        }
+    }
+
+    /*Auxilary function to be called at the end of turns.*/
+    private void changeState(){
+        switch (state){
+            case BattleState.PLAYERTURN:
+                state = BattleState.HEROTURN;
+                StartCoroutine(HeroTurn());
+                break;
+            case BattleState.HEROTURN:
+                state = BattleState.ENEMYTURN;
+                StartCoroutine(EnemyTurn());
+                break;
+            case BattleState.ENEMYTURN:
+                dialogueText.UpdateText(battleScript.getTurnOutcome()); 
+                goto default;
+            default:    //Not a normal state, start player turn.                
+                battleScript.runTurn();
+                dialogueText.UpdateText(battleScript.getTurnIntent());
+                state = BattleState.PLAYERTURN;
+                PlayerTurn();
+                break;
+        }
+        //Could check health of all units and decide if game end that way.
     }
 }
