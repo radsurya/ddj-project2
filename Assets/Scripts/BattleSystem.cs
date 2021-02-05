@@ -131,7 +131,7 @@ public class BattleSystem : MonoBehaviour
 
 //////////////////////////////////////////////PROCESS ACTIONS//////////////////////////////////////////////
 
-    IEnumerator PlayerAttack(){
+    IEnumerator PlayerAttackAction(){
         bool isDead = enemies[0].TakeDamage(assistantUnit.damage);
         enemyHUDs[0].SetHP(enemies[0].currentHP);
         dialogueText.UpdateText(new List<string>(1){enemies[0].unitName+" has just taken "+assistantUnit.damage+" damage!"});
@@ -147,13 +147,42 @@ public class BattleSystem : MonoBehaviour
         }      
     }
 
-//////////////////////////////////////////////BUTTON SELECTED//////////////////////////////////////////////
+
+    IEnumerator PlayerHideAction()
+    {
+        dialogueText.UpdateText(new List<string>(1) { " You Hide!" });
+        //Wait
+        yield return new WaitForSeconds(2f);
+    }
+
+    IEnumerator PlayerPushAction()
+    {
+        dialogueText.UpdateText(new List<string>(1) { " You Push!" });
+        //Wait
+        yield return new WaitForSeconds(2f);
+    }
+
+    IEnumerator PlayerStopAction()
+    {
+        dialogueText.UpdateText(new List<string>(1) { " You Stop!" });
+        //Wait
+        yield return new WaitForSeconds(2f);
+    }
+
+    IEnumerator PlayerUseItemAction()
+    {
+        dialogueText.UpdateText(new List<string>(1) { " You use a Item!" });
+        //Wait
+        yield return new WaitForSeconds(2f);
+    }
+
+    //////////////////////////////////////////////BUTTON SELECTED//////////////////////////////////////////////
 
     public void OnAttackButton(){
         Debug.Log("Button clicked!");
         if(state == BattleState.PLAYERTURN){
             //Select target
-            StartCoroutine(PlayerAttack());
+            StartCoroutine(PlayerAttackAction());
 
         }else if(state == BattleState.ENEMYTURN){
 
@@ -165,7 +194,7 @@ public class BattleSystem : MonoBehaviour
     public void OnHideButton(){
         if(state == BattleState.PLAYERTURN){
             //Select target
-            StartCoroutine(PlayerAttack());
+            StartCoroutine(PlayerHideAction());
 
         }else if(state == BattleState.ENEMYTURN){
 
@@ -190,7 +219,7 @@ public class BattleSystem : MonoBehaviour
     public void OnStopButton(){
         if(state == BattleState.PLAYERTURN){
             //Select target
-            StartCoroutine(PlayerAttack());
+            StartCoroutine(PlayerStopAction());
 
         }else if(state == BattleState.ENEMYTURN){
 
@@ -202,7 +231,7 @@ public class BattleSystem : MonoBehaviour
     public void OnItemButton(){
         if(state == BattleState.PLAYERTURN){
             //Select target
-            StartCoroutine(PlayerAttack());
+            StartCoroutine(PlayerUseItemAction());
 
         }else if(state == BattleState.ENEMYTURN){
 
@@ -211,8 +240,13 @@ public class BattleSystem : MonoBehaviour
         }*/
     }
 
+    public selectedObjectArrowController selectArrowController;
+
     public void objectSelected(GameObject gameObject){
         if(state == BattleState.PUSHSELECT){
+
+            Vector3 objectPos = gameObject.transform.position;
+            selectArrowController.SetArrow(objectPos);
             Debug.Log(gameObject.ToString()+" selected!");
         }
     }
