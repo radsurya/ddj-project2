@@ -13,12 +13,17 @@ public class ArrowControl : MonoBehaviour
     public GameObject arrow;
     public BattleSystem battleSystem; 
 
+    void Start(){
+        arrow.GetComponent<SpriteRenderer>().enabled = false;
+    }
+    
     void Update()
     {
-        if(!battleSystem.dialogueText.isIdle()){
+        if(!battleSystem.isInputAllowed() || battleSystem.getCurrentAction() != Action.SKIP){
             //Ignore input during text display.
             return;
-        }        
+        }
+        arrow.GetComponent<SpriteRenderer>().enabled = true;
         if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
         {
             if (pos == 1)
@@ -57,6 +62,7 @@ public class ArrowControl : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Return))
         {
+            arrow.GetComponent<SpriteRenderer>().enabled = false;
             switch (pos)
             {
                 case 1: //HIDE

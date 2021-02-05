@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum BattleState { START, PLAYERTURN, HEROTURN, ENEMYTURN, WON, LOST, PUSHSELECT }
+public enum BattleState { START, PLAYERTURN, HEROTURN, ENEMYTURN, WON, LOST }
 
-public enum Action { ATTACK, DEFEND, TAUNT, IDLE, SKIP }
+public enum Action { ATTACK, DEFEND, TAUNT, IDLE, SKIP, HIDE, STOP, PUSH, ITEM }
 
 public class BattleSystem : MonoBehaviour
 {
     public BattleState state;
+    private Action currentAction = Action.SKIP;
 
     public BattleHud heroHud;
     public BattleHud assistantHud;
@@ -145,26 +146,24 @@ public class BattleSystem : MonoBehaviour
 
     IEnumerator PlayerHideAction()
     {
-        dialogueText.UpdateText("You Hide!");
-        dialogueText.forceDialogueAdvance();
+        dialogueText.forceDialogueAdvance("You Hide!");
         //Wait
         yield return new WaitForSeconds(0f);
         changeState();
     }
 
-    IEnumerator PlayerPushAction()
+    IEnumerator PlayerPushAction(Unit target)
     {
-        dialogueText.UpdateText("You Push!");
-        dialogueText.forceDialogueAdvance();
+        dialogueText.forceDialogueAdvance("You pushed "+target.name+".");
         //Wait
         yield return new WaitForSeconds(0f);
+        currentAction = Action.SKIP;
         changeState();
     }
 
     IEnumerator PlayerStopAction()
     {
-        dialogueText.UpdateText("You Stop!");
-        dialogueText.forceDialogueAdvance();
+        dialogueText.forceDialogueAdvance("You Stop!");
         //Wait
         yield return new WaitForSeconds(0f);
         changeState();
@@ -172,8 +171,7 @@ public class BattleSystem : MonoBehaviour
 
     IEnumerator PlayerUseItemAction()
     {
-        dialogueText.UpdateText("You use a Item!");
-        dialogueText.forceDialogueAdvance();
+        dialogueText.forceDialogueAdvance("You use a Item!");
         //Wait
         yield return new WaitForSeconds(0f);
         changeState();
@@ -208,15 +206,10 @@ public class BattleSystem : MonoBehaviour
 
     public void OnPushButton(){
         if(state == BattleState.PLAYERTURN){
-            //Select target
-            state = BattleState.PUSHSELECT;
-            StartCoroutine(PlayerPushAction());
-
-        }else if(state == BattleState.ENEMYTURN){
-
-        }/*else if(state == BattleState.HEROTURN){
-
-        }*/
+            //Sets flag and waits for target selection.
+            currentAction = Action.PUSH;
+            dialogueText.forceDialogueAdvance("Select your target.");
+        }
     }
 
     public void OnStopButton(){
@@ -248,14 +241,18 @@ public class BattleSystem : MonoBehaviour
     public selectedObjectArrowController selectArrowController;
 
     public void objectSelected(GameObject gameObject){
-        if(!dialogueText.isIdle()){            
+        //Clickable objects can self determine this.
+        /*if(!isInputAllowed()){            
             Debug.Log("Input disabled whilst typing");
             return; //Input disabled whilst typing.
-        }
-        if(state == BattleState.PUSHSELECT){
-            Vector3 objectPos = gameObject.transform.position;
-            selectArrowController.SetArrow(objectPos);        
+        }*/
+        if(currentAction == Action.PUSH){
+            //Picks up current object position and sends it to Arrow.
+            selectArrowController.SetArrow(gameObject.transform.position);
+
             Debug.Log(gameObject.ToString()+" pushed!");
+            StartCoroutine(PlayerPushAction(gameObject.GetComponent<Unit>()));
+
         }
     }
 
@@ -281,5 +278,13 @@ public class BattleSystem : MonoBehaviour
                 break;
         }
         //Could check health of all units and decide if game end that way.
+    }
+
+    public bool isInputAllowed(){
+        return dialogueText.isIdle() && state == BattleState.PLAYERTURN;
+    }
+
+    public Action getCurrentAction(){
+        return currentAction;
     }
 }
