@@ -45,6 +45,8 @@ public class BattleScript{
             turnTwo(playerAction, target);
         }else if(!phase3Complete){
             turnThree(playerAction, target);
+        }else if(!phase4Complete){
+            turnFour(playerAction, target);
         }
     }
 
@@ -225,10 +227,106 @@ public class BattleScript{
             targets.Add(notSoBigBlobA);
         }
 
+        actions.Add(Action.ATTACK);
+        actions.Add(Action.SKIP);
+        actions.Add(Action.SKIP);
+        phase3Complete = true;
+        deadTurn = 0;
+
         outcomes.Add("Hero: “Take this, you… small blob!?”");
         outcomes.Add("The Not-so-Big Blob is thinking of hiring a lawyer to sue the Hero for slander.");
         outcomes.Add("The Hero slashes "+targets[0]+" powerfully!");
         outcomes.Add("The slash is mildly uncomfortable on its blobby body. Another dose of sword is likely to persuade it to leave.");
+    }
+    private void turnFour(Action playerAction, string target){
+        intents.Add("The Hero prepares to slash at "+notSoBigBlobB+", his nose covered in snot.");
+        intents.Add("Hero: “Achoo!”");
+        intents.Add("The Blobs, disgusted at the Hero’s snot, prepare to jump at you. Two blobs of their size is too much for you to handle.");
+        intents.Add("Hero: “It’s your fault, dammit! Prepare to taste steel!”");
+        intents.Add("You overcome your instincts and stop yourself from mentioning the Hero’s sword is not made of steel.");
+        if(playerAction == Action.SKIP)
+            return; //No need to process rest of behaviour.
+        if(playerAction == Action.HIDE){
+            if (target.Equals(hero))
+            { 
+                outcomes.Add("The Hero slashes Not-so-Big Blob B powerfully!");
+                outcomes.Add("The slash is mildly uncomfortable on its blobby body. Another dose of sword is likely to persuade it to leave.");
+                outcomes.Add("Both blobs jump at you!");
+                outcomes.Add("But you hid behind the Hero, so they each hit one of their arms, sticking there like the sticky blobs they are.");
+                outcomes.Add("Hero: “What the!? Let go of me at once! They explicitly told me last time not to come back home full of mucous!”");
+                outcomes.Add("The Hero starts flailing around to get rid of the blobs.");
+                outcomes.Add("It suddenly hits you that you’re right behind the Hero. Like, literally hits you. With his arm.");
+                outcomes.Add("And it’s the last thing you remember.");
+                outcomes.Add("When you next awake, you find yourself on a comfortable bed. A springy bed. A viscous bed. And you’re sinking into it!");
+                outcomes.Add("As it turns out, that bed became your new home, for your new life as the best friend of a giant blob.");
+                outcomes.Add("At least your new big and strong friend doesn’t attack you accidentally as much.");
+                actions.Add(Action.ATTACK);
+                targets.Add(notSoBigBlobB);
+                end = 2;
+                return; //FAIL - Hid behind hero and being emprisoned by the blob
+            }
+        }else if (playerAction == Action.PUSH){
+            if(target.Equals(hero)){    //Try to push the hero
+                actions.Add(Action.ATTACK);
+                targets.Add(notSoBigBlobA);
+            }else if(target.Equals(bigBlob)){
+                end = 2;
+            }     
+        }else if(playerAction == Action.STOP){
+            if(target.Equals(hero)){    //Try to stop the hero
+                actions.Add(Action.SKIP);   //Hero
+                outcomes.Add("You briefly make the Hero reconsider the value of blob as a fashion statement.");
+                outcomes.Add("The Hero refrains from attacking as he ponders your valuable advice.");
+                actions.Add(Action.ATTACK);   //notSoBigBlobA
+                targets.Add(assistant);
+                actions.Add(Action.ATTACK);   //notSoBigBlobB
+                targets.Add(assistant);
+                end = 2;
+                return;
+            }
+        }//Using items does nothing.
+
+        //Attacks B if target was not changed.
+        if (playerAction != Action.PUSH || !target.Equals(hero)){
+            targets.Add(notSoBigBlobA);
+        }
+        if(playerAction != Action.HIDE && !(playerAction == Action.PUSH && target.Equals(hero))){
+            outcomes.Add("The Hero slashes Not-so-Big Blob B powerfully!");
+            outcomes.Add("The slash is mildly uncomfortable on its blobby body. Another dose of sword is likely to persuade it to leave.");
+            outcomes.Add("Both blobs jump at you!");
+            outcomes.Add("They each hit one of your arms, getting stuck to them and immobilizing you.");
+            outcomes.Add("Hero: “Blast! It escaped. Where did you- Goodness! My friend, they’re eating you!”");
+            outcomes.Add("Assistant: “No they’re not.”");
+            outcomes.Add("Hero: “Rest assured, you’ll be avenged.”");
+            outcomes.Add("Assistant: “No they’re not. No they’re not. No they’re not. There’s nothing to avenge!”");
+            outcomes.Add("As your arms are immobilized, there’s nothing you can do to stop the Hero from raising his sharp, scary, dangerous sword.");
+            outcomes.Add("Assistant: “No. No! Stop! Ack! I’m outta here!”");
+            outcomes.Add("Realising you still have two limbs which aren’t immobilised, you make like a tree and leave.");
+            outcomes.Add("You spend the rest of your days cohabiting the dungeon with your new blobby neighbours, Lefty and Righty, names they decided based on their respective arms.");
+            outcomes.Add("On some days you can still hear the Hero wandering around, looking for his next opportunity to save you.");
+            targets.Add(notSoBigBlobB);
+            end = 2; //FAIL - Doing nothing and being emprisoned by the blob
+        }else{
+            outcomes.Add("Hero: “Take this, you hypocritical blob!”");
+            outcomes.Add("The Not-so-Big Blob regrets not having a cellphone to call its lawyer.");
+            outcomes.Add("The Hero slashes at " + notSoBigBlobB + ", but your shove makes him hit " + targets[0] + "!");
+            outcomes.Add("The slashes are getting to be annoying, so the blob bobbles away.");
+            outcomes.Add("Hero: “Ha! A hypocritical coward!”");
+            outcomes.Add(notSoBigBlobB + " jumps in your general direction!");
+            outcomes.Add("The Blob hits you in the arm, absorbing it!");
+            outcomes.Add("Assistant: “Oh no, I can’t move my arm. And the Hero will probably...”");
+            outcomes.Add("Hero: “I got one, my friend. Now it’s just…”");
+            outcomes.Add("Hero: “Goodness! It ate your arm!”");
+            outcomes.Add("Hero: “Worry not! I shall avenge you at once!”");
+            outcomes.Add("Assistant: “I’m still alive and it didn’t eat my arm!”");
+
+        }
+        phase4Complete = true;
+        deadTurn = 0;
+        
+        actions.Add(Action.ATTACK);
+        actions.Add(Action.SKIP);
+        actions.Add(Action.SKIP);
     }
 }
 /*  TEMPLATE
