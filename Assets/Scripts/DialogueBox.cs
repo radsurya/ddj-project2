@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class DialogueBox : MonoBehaviour
 {
@@ -34,6 +35,9 @@ public class DialogueBox : MonoBehaviour
         if (messages.Count > 0) //In theory this check is redundant.
         {
             currentMessage = messages.Dequeue();
+            /*if(currentMessage.Contains("Scene")){   //WARNING: Very rough method.
+                SceneManager.LoadScene(currentMessage);
+            }*/
             dialogueText.text = "";
             foreach (char letter in currentMessage.ToCharArray())
             {

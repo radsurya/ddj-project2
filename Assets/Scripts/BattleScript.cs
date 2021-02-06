@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 //Generalise for multiple scripts later.
 public class BattleScript{
     /*The battle progresses in phases. The first phase is the hero attacking the blob.
@@ -166,36 +165,53 @@ public class BattleScript{
             outcomes.Add("Hero: “Wait a second. There’s more of you now??”");
             outcomes.Add("Hero: “Ha! Simply a chance to flex my skills. Ready yourself, you Glasses-Wearing Blob!”");
             outcomes.Add("Glasses-Wearing Blob: “Haahh…”");
-            outcomes.Add("You spend the rest of your life bobbing around the dungeon, trying not to look menacing. Occasionally you are visited by your friend the Hero, who may or may not be trying to slay you.");
+            outcomes.Add("You spend the rest of your life bobbing around the dungeon, trying not to look menacing.");
+            outcomes.Add("Occasionally you are visited by your friend the Hero, who may or may not be trying to slay you.");
             return; //FAIL: LOSE - Turn into a blob.
         }
         outcomes.Add("Hero: “Ack! My beautiful nose!”");
-        SceneManager.LoadScene("Scene2");
+        //outcomes.Add("Scene2");
     }
     private void turnThree(Action playerAction, string target){
-        //hero
-        //intents.Add();
-        //enemy
+        intents.Add("The Hero prepares to slash at "+notSoBigBlobA+", his nose covered in snot.");
+        intents.Add("Hero: “It’s not snot! It’s blob! You covered my nose in blob, one of you!”");
+        intents.Add("The Blobs bobble mockingly.");
+        intents.Add("You try to avoid mocking the Hero, since that sword is looking pretty sharp, as the now divided blob can attest to.");
         if(playerAction == Action.SKIP)
             return; //No need to process rest of behaviour.
         if(playerAction == Action.STOP){
-            if(target.Equals(hero)){    //Try to stop the hero
-            }else if(target.Equals(bigBlob)){
-            }else{  //Try to stop anything else
-            }                            
+                if(target.Equals(hero)){    //Try to stop the hero
+                    actions.Add(Action.SKIP);   //Hero
+                    outcomes.Add("You briefly make the Hero reconsider the value of blob as a fashion statement.");
+                    outcomes.Add("The Hero refrains from attacking as he ponders your valuable advice.");
+                    actions.Add(Action.SKIP);   //notSoBigBlobA
+                    actions.Add(Action.SKIP);   //notSoBigBlobB
+                if(deadTurn > 0){
+                    outcomes.Add("You yourself ponder at the Hero's propensity to ponder at your command.");
+                    outcomes.Add("The Not-so-Big Blobs ponder on whether to bobble menacingly.");
+                }else{
+                    outcomes.Add("The Not-so-Big Blobs continue to bobble menacingly, ready to push the fashion world forward everywhere.");
+                }
+                deadTurn++;
+                return;
+            }                          
         }else if (playerAction == Action.PUSH){
             if(target.Equals(hero)){    //Try to push the hero
+                targets.Add(notSoBigBlobB);
             }else if(target.Equals(bigBlob)){
                 //TODO: FAIL GAME - PRINT ENDING, ETC
-            } //Pushing other things does nothing.        
+            }     
         }//Using items does nothing.
-        if (playerAction == Action.HIDE){
-            if(target.Equals(hero)){    //Try to hide behind the hero
-            }else if(target.Equals(rock)){
-            }    
-            //Hiding elsewhere does nothing.        
-        }else{
+
+        //Attacks A if target was not changed.
+        if (playerAction != Action.PUSH || !target.Equals(hero)){
+            targets.Add(notSoBigBlobA);
         }
+
+        outcomes.Add("Hero: “Take this, you… small blob!?”");
+        outcomes.Add("The Not-so-Big Blob is thinking of hiring a lawyer to sue the Hero for slander.");
+        outcomes.Add("The Hero slashes "+targets[0]+" powerfully!");
+        outcomes.Add("The slash is mildly uncomfortable on its blobby body. Another dose of sword is likely to persuade it to leave.");
     }
 }
 /*  TEMPLATE
