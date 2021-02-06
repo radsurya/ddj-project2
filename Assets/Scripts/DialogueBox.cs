@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
+//using System.Threading;
 
 public class DialogueBox : MonoBehaviour
 {
+    //public Semaphore semaphoreObject = new Semaphore(initialCount: 0, maximumCount: 1, name: "MyUniqueNameApp");
     public TextMeshProUGUI dialogueText;
     static float lettertime = 0.05f;
 
@@ -24,6 +26,10 @@ public class DialogueBox : MonoBehaviour
 
     /*Updates text to display the following message.*/
     public void UpdateText(string m){
+        if (isIdle())
+        {
+            //semaphoreObject.WaitOne();
+        }
         //Must wait for message to finish before starting next one.
         messages.Enqueue(m);
     }
@@ -46,7 +52,11 @@ public class DialogueBox : MonoBehaviour
             }
             yield return new WaitForSeconds(1f); //Always wait 1 second after typing.
         }   
-        typing = false;     
+        typing = false;
+        if (isIdle())
+        {
+            //semaphoreObject.Release();
+        }
     }
 
     /*Function that registers text box clicks to advance the text or move to next line.*/

@@ -26,7 +26,9 @@ public class BattleScript{
     private string bigBlob = "Big Blob";
     private string notSoBigBlobA = "Not-so-Big Blob A";
     private string notSoBigBlobB = "Not-so-Big Blob B"; 
-    private string rock = "Rock";   
+    private string rock = "Rock";
+
+    public int end = 0; //0 - not finished, 1 - won, 2 - lost
 
     public void runTurn(){
         runTurn(Action.SKIP, "");
@@ -94,7 +96,8 @@ public class BattleScript{
                 outcomes.Add("The Hero's target did change: to the one and only Big Blob."
                 +"\nI mean, what did you expect?");
             }else if(target.Equals(bigBlob)){
-                //TODO: FAIL GAME - PRINT ENDING, ETC
+                end = 2;
+                return;
             }    
             //Pushing other things does nothing.        
         }
@@ -122,22 +125,34 @@ public class BattleScript{
         intents.Add("Assistant: “Wait, me??");
         if(playerAction == Action.SKIP)
             return; //No need to process rest of behaviour.
-        if(playerAction == Action.STOP){
-            if(target.Equals(hero)){    //Try to stop the hero
+        if (playerAction == Action.STOP)
+        {
+            if (target.Equals(hero))
+            {    //Try to stop the hero
                 outcomes.Add("Unfortunately, the Hero was too busy faffing about with his swords to listen to you.");
                 outcomes.Add("In any case, what the Hero is currently doing is not much different from nothing.");
-            }else if(target.Equals(bigBlob)){
+            }
+            else if (target.Equals(bigBlob))
+            {
                 outcomes.Add("As such, your measured argument was like blob in one ear and blob out the other.");
-            }else{  //Try to stop anything else
+            }
+            else
+            {  //Try to stop anything else
                 outcomes.Add("Your efforts at stopping something that has no intention to move were successful!");
-            }                            
-        }else if (playerAction == Action.PUSH){
-            if(target.Equals(hero)){    //Try to push the hero
+            }
+        }
+        else if (playerAction == Action.PUSH)
+        {
+            if (target.Equals(hero))
+            {    //Try to push the hero
                 outcomes.Add("Yet, however much they'd like to attack, they are otherwise engaged for the moment.");
-            }else if(target.Equals(bigBlob)){
-                //TODO: FAIL GAME - PRINT ENDING, ETC
-            } //Pushing other things does nothing.        
-        }//Using items does nothing.
+            }
+            else if (target.Equals(bigBlob))
+            {
+                end = 2;
+            } //Pushing other things does nothing.      
+
+        }
         phase2Complete = true;
         deadTurn = 0; //Each flag/fase set resets the dead turn.
 
@@ -167,6 +182,7 @@ public class BattleScript{
             outcomes.Add("Glasses-Wearing Blob: “Haahh…”");
             outcomes.Add("You spend the rest of your life bobbing around the dungeon, trying not to look menacing.");
             outcomes.Add("Occasionally you are visited by your friend the Hero, who may or may not be trying to slay you.");
+            end = 2;
             return; //FAIL: LOSE - Turn into a blob.
         }
         outcomes.Add("Hero: “Ack! My beautiful nose!”");
@@ -180,26 +196,27 @@ public class BattleScript{
         if(playerAction == Action.SKIP)
             return; //No need to process rest of behaviour.
         if(playerAction == Action.STOP){
-                if(target.Equals(hero)){    //Try to stop the hero
-                    actions.Add(Action.SKIP);   //Hero
-                    outcomes.Add("You briefly make the Hero reconsider the value of blob as a fashion statement.");
-                    outcomes.Add("The Hero refrains from attacking as he ponders your valuable advice.");
-                    actions.Add(Action.SKIP);   //notSoBigBlobA
-                    actions.Add(Action.SKIP);   //notSoBigBlobB
-                if(deadTurn > 0){
-                    outcomes.Add("You yourself ponder at the Hero's propensity to ponder at your command.");
-                    outcomes.Add("The Not-so-Big Blobs ponder on whether to bobble menacingly.");
-                }else{
-                    outcomes.Add("The Not-so-Big Blobs continue to bobble menacingly, ready to push the fashion world forward everywhere.");
-                }
-                deadTurn++;
-                return;
-            }                          
+            if(target.Equals(hero)){    //Try to stop the hero
+                actions.Add(Action.SKIP);   //Hero
+                outcomes.Add("You briefly make the Hero reconsider the value of blob as a fashion statement.");
+                outcomes.Add("The Hero refrains from attacking as he ponders your valuable advice.");
+                actions.Add(Action.SKIP);   //notSoBigBlobA
+                actions.Add(Action.SKIP);   //notSoBigBlobB
+            }
+            if(deadTurn > 0){
+                outcomes.Add("You yourself ponder at the Hero's propensity to ponder at your command.");
+                outcomes.Add("The Not-so-Big Blobs ponder on whether to bobble menacingly.");
+            }else{
+                outcomes.Add("The Not-so-Big Blobs continue to bobble menacingly, ready to push the fashion world forward everywhere.");
+            }
+            deadTurn++;
+            return;
+
         }else if (playerAction == Action.PUSH){
             if(target.Equals(hero)){    //Try to push the hero
                 targets.Add(notSoBigBlobB);
             }else if(target.Equals(bigBlob)){
-                //TODO: FAIL GAME - PRINT ENDING, ETC
+                end = 2;
             }     
         }//Using items does nothing.
 
