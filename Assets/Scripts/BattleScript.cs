@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 //Generalise for multiple scripts later.
 public class BattleScript{
     /*The battle progresses in phases. The first phase is the hero attacking the blob.
@@ -42,7 +43,7 @@ public class BattleScript{
         }else if(!phase2Complete){
             turnTwo(playerAction, target);
         }else if(!phase3Complete){
-            //TODO
+            turnThree(playerAction, target);
         }
     }
 
@@ -169,5 +170,57 @@ public class BattleScript{
             return; //FAIL: LOSE - Turn into a blob.
         }
         outcomes.Add("Hero: “Ack! My beautiful nose!”");
+        SceneManager.LoadScene("Scene2");
+    }
+    private void turnThree(Action playerAction, string target){
+        //hero
+        //intents.Add();
+        //enemy
+        if(playerAction == Action.SKIP)
+            return; //No need to process rest of behaviour.
+        if(playerAction == Action.STOP){
+            if(target.Equals(hero)){    //Try to stop the hero
+            }else if(target.Equals(bigBlob)){
+            }else{  //Try to stop anything else
+            }                            
+        }else if (playerAction == Action.PUSH){
+            if(target.Equals(hero)){    //Try to push the hero
+            }else if(target.Equals(bigBlob)){
+                //TODO: FAIL GAME - PRINT ENDING, ETC
+            } //Pushing other things does nothing.        
+        }//Using items does nothing.
+        if (playerAction == Action.HIDE){
+            if(target.Equals(hero)){    //Try to hide behind the hero
+            }else if(target.Equals(rock)){
+            }    
+            //Hiding elsewhere does nothing.        
+        }else{
+        }
     }
 }
+/*  TEMPLATE
+private void turnThree(Action playerAction, string target){
+        //hero
+        //enemy
+        if(playerAction == Action.SKIP)
+            return; //No need to process rest of behaviour.
+        if(playerAction == Action.STOP){
+            if(target.Equals(hero)){    //Try to stop the hero
+            }else if(target.Equals(bigBlob)){
+            }else{  //Try to stop anything else
+            }                            
+        }else if (playerAction == Action.PUSH){
+            if(target.Equals(hero)){    //Try to push the hero
+            }else if(target.Equals(bigBlob)){
+                //TODO: FAIL GAME - PRINT ENDING, ETC
+            } //Pushing other things does nothing.        
+        }//Using items does nothing.
+        if (playerAction == Action.HIDE){
+            if(target.Equals(hero)){    //Try to hide behind the hero
+            }else if(target.Equals(rock)){
+            }    
+            //Hiding elsewhere does nothing.        
+        }else{
+        }
+    }
+*/
