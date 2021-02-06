@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using UnityEngine.SceneManagement;
+//using UnityEngine.SceneManagement;
 
 public class DialogueBox : MonoBehaviour
 {
@@ -11,7 +11,7 @@ public class DialogueBox : MonoBehaviour
 
     bool typing = false;
     
-    public Queue<string> messages = new Queue<string>();
+    private Queue<string> messages = new Queue<string>();
     private string currentMessage;
 
     /*Updates text to display the following messages.*/
@@ -24,7 +24,6 @@ public class DialogueBox : MonoBehaviour
 public bool dialogueFinished = false;
     /*Updates text to display the following message.*/
     public void UpdateText(string m){
-        dialogueFinished = false;
         //Must wait for message to finish before starting next one.
         messages.Enqueue(m);
     }
@@ -48,9 +47,6 @@ public bool dialogueFinished = false;
             yield return new WaitForSeconds(1f); //Always wait 1 second after typing.
         }   
         typing = false;
-        if(isIdle()){
-            dialogueFinished = true;
-        }
     }
 
     /*Function that registers text box clicks to advance the text or move to next line.*/
