@@ -17,6 +17,8 @@ public class BattleSystem : MonoBehaviour
 
     public Unit heroUnit;
     public Unit assistantUnit;
+    private Vector3 assistantPosition;
+    private SpriteRenderer assistantSpriteRenderer;
     public Unit[] enemies = new Unit[4];    
 
     public DialogueBox dialogueText;
@@ -42,6 +44,8 @@ public class BattleSystem : MonoBehaviour
         Debug.Log("Hero successful.");
         //Initialise assistant object.
         addUnit(assistantUnit); 
+        assistantPosition = assistantUnit.transform.position;
+        assistantSpriteRenderer = assistantUnit.GetComponent<SpriteRenderer>();
         //Initialise enemy objects
         List<Unit> livingEnemies = new List<Unit>();
         for (int i = 0; i < enemies.Length && enemies[i] != null; i++){
@@ -63,12 +67,20 @@ public class BattleSystem : MonoBehaviour
 
 //////////////////////////////////////////////TURN FUNCTIONS//////////////////////////////////////////////
 
-    void PlayerTurn(){
+    IEnumerator PlayerTurn(){
+        //Wait a reasonable time for message display:
+        yield return new WaitForSeconds(dialogueText.numberOfMessages()/2);
+        state = BattleState.PLAYERTURN;
+        //Reset assistant position.
+        assistantUnit.transform.position = assistantPosition;
+        assistantSpriteRenderer.sortingOrder = 0;
+        
         dialogueText.UpdateText("Your time to act!");
         //The game does nothing during our turn, moving on only through inputs.
     }
 
     IEnumerator HeroTurn(){
+        state = BattleState.HEROTURN;
         bool isDead = false;
         yield return StartCoroutine(processGenericAction(battleScript.getNextAction(), heroUnit, 
              boolean => isDead = boolean));
@@ -82,6 +94,7 @@ public class BattleSystem : MonoBehaviour
     }
 
     IEnumerator EnemyTurn(){
+        state = BattleState.ENEMYTURN;
         bool isDead = false;
         foreach (Unit enemy in enemies){
             yield return StartCoroutine(processGenericAction(battleScript.getNextAction(), enemy, 
@@ -118,7 +131,7 @@ public class BattleSystem : MonoBehaviour
             dialogueText.UpdateText(myself.unitName+" attacks!");
             yield return new WaitForSeconds(1f);
             isDead = target.TakeDamage(myself.damage);
-            //targetHud.SetHP(target.currentHP);
+            target.battleHud.SetHP(target.currentHP);
         }else if (action == Action.DEFEND){
             dialogueText.UpdateText(myself.unitName+" defends!");
             //yield return new WaitForSeconds(1f);
@@ -132,7 +145,7 @@ public class BattleSystem : MonoBehaviour
         callbackOnFinish(isDead);   //Calls a function so as to return this result.
     }
 
-    IEnumerator PlayerAttackAction(){
+    /*IEnumerator PlayerAttackAction(){
         bool isDead = enemies[0].TakeDamage(assistantUnit.damage);
         //enemyHUDs[0].SetHP(enemies[0].currentHP);
         dialogueText.UpdateText(enemies[0].unitName+" has just taken "+assistantUnit.damage+" damage!");
@@ -145,7 +158,7 @@ public class BattleSystem : MonoBehaviour
         }else{
             changeState();
         }      
-    }
+    }*/
 
     //TODO: Check if waiting truly makes sense in the following functions.
 
@@ -154,7 +167,8 @@ public class BattleSystem : MonoBehaviour
         dialogueText.forceDialogueAdvance(target.hideString);
         battleScript.runTurn(currentAction,target.unitName);
 
-        assistantUnit.transform.position = target.transform.position; 
+        assistantUnit.transform.position = target.transform.position;
+        assistantSpriteRenderer.sortingOrder -= 5; 
 
         //Wait
         yield return new WaitForSeconds(0f);
@@ -191,7 +205,7 @@ public class BattleSystem : MonoBehaviour
 //////////////////////////////////////////////BUTTON SELECTED//////////////////////////////////////////////
 
     //Deprecated: This button does not exist, and this action is not necessary.
-    public void OnAttackButton(){
+    /*public void OnAttackButton(){
         //Debug.Log("Button clicked!");
         if(state == BattleState.PLAYERTURN){
             //Select target
@@ -199,10 +213,10 @@ public class BattleSystem : MonoBehaviour
 
         }else if(state == BattleState.ENEMYTURN){
 
-        }/*else if(state == BattleState.HEROTURN){
+        }else if(state == BattleState.HEROTURN){
 
-        }*/
-    }
+        }
+    }*/
     //TODO: The if's may be unecessary, but are better left in, for safety.
     public void OnHideButton(){
         if(state == BattleState.PLAYERTURN){
@@ -268,11 +282,9 @@ public class BattleSystem : MonoBehaviour
         switch (state){
             case BattleState.PLAYERTURN:
                 currentAction = Action.SKIP;    //Reset current action.
-                state = BattleState.HEROTURN;
                 StartCoroutine(HeroTurn());
                 break;
             case BattleState.HEROTURN:
-                state = BattleState.ENEMYTURN;
                 StartCoroutine(EnemyTurn());
                 break;
             case BattleState.ENEMYTURN:
@@ -281,8 +293,7 @@ public class BattleSystem : MonoBehaviour
             default:    //Not a normal state, start player turn.                
                 battleScript.runTurn();
                 dialogueText.UpdateText(battleScript.getTurnIntent());
-                state = BattleState.PLAYERTURN;
-                PlayerTurn();
+                StartCoroutine(PlayerTurn());
                 break;
         }
         //Could check health of all units and decide if game end that way.

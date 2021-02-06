@@ -69,4 +69,8 @@ public class DialogueBox : MonoBehaviour
     public bool isIdle(){
         return messages.Count <= 0 && !typing; 
     }
+
+    public int numberOfMessages(){
+        return messages.Count;
+    }
 }
