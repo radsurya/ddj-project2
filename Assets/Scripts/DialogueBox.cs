@@ -3,17 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
-//using System.Threading;
 
 public class DialogueBox : MonoBehaviour
 {
-    //public Semaphore semaphoreObject = new Semaphore(initialCount: 0, maximumCount: 1, name: "MyUniqueNameApp");
     public TextMeshProUGUI dialogueText;
     static float lettertime = 0.05f;
 
     bool typing = false;
     
-    private Queue<string> messages = new Queue<string>();
+    public Queue<string> messages = new Queue<string>();
     private string currentMessage;
 
     /*Updates text to display the following messages.*/
@@ -23,17 +21,14 @@ public class DialogueBox : MonoBehaviour
             UpdateText(s);
         }
     }
-
+public bool dialogueFinished = false;
     /*Updates text to display the following message.*/
     public void UpdateText(string m){
-        if (isIdle())
-        {
-            //semaphoreObject.WaitOne();
-        }
+        dialogueFinished = false;
         //Must wait for message to finish before starting next one.
         messages.Enqueue(m);
     }
-
+    
     /*Logic for typing the text in textbox character by character.*/
     private IEnumerator TypeText()
     {
@@ -53,9 +48,8 @@ public class DialogueBox : MonoBehaviour
             yield return new WaitForSeconds(1f); //Always wait 1 second after typing.
         }   
         typing = false;
-        if (isIdle())
-        {
-            //semaphoreObject.Release();
+        if(isIdle()){
+            dialogueFinished = true;
         }
     }
 

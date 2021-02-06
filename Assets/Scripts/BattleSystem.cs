@@ -68,8 +68,8 @@ public class BattleSystem : MonoBehaviour
 //////////////////////////////////////////////TURN FUNCTIONS//////////////////////////////////////////////
 
     IEnumerator PlayerTurn(){
-        //Wait a reasonable time for message display:
-        yield return new WaitForSeconds(dialogueText.numberOfMessages()/2);
+        //Wait until all dialogue has displayed.
+        yield return new WaitUntil(dialogueText.isIdle);
         state = BattleState.PLAYERTURN;
         //Reset assistant position.
         assistantUnit.transform.position = assistantPosition;
@@ -111,7 +111,7 @@ public class BattleSystem : MonoBehaviour
         }         
     }
 
-    void EndBattle(){
+    private void EndBattle(){
         if(state == BattleState.WON){
             dialogueText.UpdateText("You have survived yet another ordeal!");
             dialogueText.UpdateText("Victory!");
@@ -119,10 +119,14 @@ public class BattleSystem : MonoBehaviour
         else if (state == BattleState.LOST){
             dialogueText.UpdateText("The situation has developed not necessarily to your advantage.");
             dialogueText.UpdateText("GAME OVER!");
-            //dialogueText.semaphoreObject.WaitOne();
-            //UnityEditor.EditorApplication.isPlaying = false;
-            //Application.Quit();
         }
+        StartCoroutine(CloseGame());
+    }
+    IEnumerator CloseGame(){        
+            yield return new WaitUntil(dialogueText.isIdle);
+            yield return new WaitForSeconds(1f);
+            UnityEditor.EditorApplication.isPlaying = false;
+            //Application.Quit();
     }
 
 //////////////////////////////////////////////PROCESS ACTIONS//////////////////////////////////////////////
@@ -178,22 +182,7 @@ public class BattleSystem : MonoBehaviour
 
         //Wait
         yield return new WaitForSeconds(0f);
-        if (battleScript.end == 1)
-        {
-            state = BattleState.WON;
-            dialogueText.UpdateText(battleScript.getTurnOutcome());
-            EndBattle();
-        }
-        else if (battleScript.end == 2)
-        {
-            state = BattleState.LOST;
-            dialogueText.UpdateText(battleScript.getTurnOutcome());
-            EndBattle();
-        }
-        else
-        {
-            changeState();
-        }
+        endPlayerTurn();
     }
 
     IEnumerator PlayerPushAction(ClickableObject target)
@@ -202,22 +191,7 @@ public class BattleSystem : MonoBehaviour
         battleScript.runTurn(currentAction,target.unitName);
         //Wait
         yield return new WaitForSeconds(0f);
-        if (battleScript.end == 1)
-        {
-            state = BattleState.WON;
-            dialogueText.UpdateText(battleScript.getTurnOutcome());
-            EndBattle();
-        }
-        else if (battleScript.end == 2)
-        {
-            state = BattleState.LOST;
-            dialogueText.UpdateText(battleScript.getTurnOutcome());
-            EndBattle();
-        }
-        else
-        {
-            changeState();
-        }
+        endPlayerTurn();
     }
 
     IEnumerator PlayerStopAction(ClickableObject target)
@@ -226,22 +200,7 @@ public class BattleSystem : MonoBehaviour
         battleScript.runTurn(currentAction,target.unitName);
         //Wait
         yield return new WaitForSeconds(0f);
-        if (battleScript.end == 1)
-        {
-            state = BattleState.WON;
-            dialogueText.UpdateText(battleScript.getTurnOutcome());
-            EndBattle();
-        }
-        else if (battleScript.end == 2)
-        {
-            state = BattleState.LOST;
-            dialogueText.UpdateText(battleScript.getTurnOutcome());
-            EndBattle();
-        }
-        else
-        {
-            changeState();
-        }
+        endPlayerTurn();
     }
 
     IEnumerator PlayerUseItemAction(ClickableObject target)
@@ -250,6 +209,10 @@ public class BattleSystem : MonoBehaviour
         battleScript.runTurn(currentAction,target.unitName);
         //Wait
         yield return new WaitForSeconds(0f);
+        endPlayerTurn();
+    }
+
+    private void endPlayerTurn(){
         if (battleScript.end == 1)
         {
             state = BattleState.WON;
