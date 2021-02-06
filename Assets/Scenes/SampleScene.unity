@@ -436,9 +436,15 @@ MonoBehaviour:
     ended up exactly where you were.
   itemString: You used your "Glasses" item! You now have glasses! You also had some
     before, so it doesn't make much of a difference.
+  walkInString: You make your way behind them, unsure whether it is safer to stick
+    sloce or keep a distance.
+  attackString: 
+  defendString: 
+  idleString: 
   damage: 1
   maxHP: 10
   currentHP: 10
+  battleHud: {fileID: 536242977}
 --- !u!1 &348914827
 GameObject:
   m_ObjectHideFlags: 0
@@ -687,16 +693,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   battleSystem: {fileID: 1223459579}
   unitName: Hero
-  hideString: You hid behind the Hero! A good idea, half the time. When he's facing
+  hideString: You hid behind the Hero! A good idea, half the time. When they're facing
     the other way.
-  stopString: You stopped the Hero from acting agains your interests!
-  pushString: You pushed the Hero! You're not sure he felt it, but it seems he's
+  stopString: You stopped the Hero from acting against your interests!
+  pushString: You pushed the Hero! You're not sure they felt it, but it seems they've
     changed targets!
-  itemString: You intended to use an item on the Hero, but his sheer heroism made
+  itemString: You intended to use an item on the Hero, but their sheer heroism made
     you forget you have no items.
+  walkInString: The Hero fearleassly charges in, having spotted their foe!
+  attackString: 
+  defendString: 
+  idleString: 
   damage: 10
   maxHP: 100
   currentHP: 100
+  battleHud: {fileID: 1172238079}
 --- !u!1 &458069280
 GameObject:
   m_ObjectHideFlags: 0
@@ -1461,13 +1472,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   state: 0
-  heroHud: {fileID: 1172238079}
-  assistantHud: {fileID: 536242977}
-  enemyHUDs:
-  - {fileID: 1549689179}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   heroUnit: {fileID: 396205789}
   assistantUnit: {fileID: 334832488}
   enemies:
@@ -1917,9 +1921,15 @@ MonoBehaviour:
     now can't move.
   itemString: You attempted to use and item on the Big Blob, but you fear it would
     blob it up.
-  damage: 7
+  walkInString: The Big Blob did not move, you just charged in its direction like
+    a maniac.
+  attackString: 
+  defendString: 
+  idleString: 
+  damage: 10
   maxHP: 20
   currentHP: 20
+  battleHud: {fileID: 1549689179}
 --- !u!223 &2116783074
 Canvas:
   m_ObjectHideFlags: 0

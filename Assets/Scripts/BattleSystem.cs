@@ -11,20 +11,18 @@ public class BattleSystem : MonoBehaviour
     public BattleState state;
     private Action currentAction = Action.SKIP;
 
-    public BattleHud heroHud;
+    /*public BattleHud heroHud;
     public BattleHud assistantHud;
-    public BattleHud[] enemyHUDs = new BattleHud[4];
+    public BattleHud[] enemyHUDs = new BattleHud[4];*/
 
     public Unit heroUnit;
     public Unit assistantUnit;
-    public Unit[] enemies = new Unit[4];
-
-
-    
+    public Unit[] enemies = new Unit[4];    
 
     public DialogueBox dialogueText;
 
-    private BattleScript battleScript = new BattleScript();  
+    private BattleScript battleScript = new BattleScript();
+    private Dictionary<string,Unit> unitNameDict = new Dictionary<string, Unit>();  
     //Game level. Tutorial is 0.
     //int level = 0;
     //Game turn.
@@ -39,23 +37,28 @@ public class BattleSystem : MonoBehaviour
     IEnumerator SetupBattle(){
         //WARNING: Each scene needs to be manually prepared, for different levels.
 
-        //Initialise assistant object.
-        assistantHud.SetHUD(assistantUnit);
         //Initialise hero object.
-        heroHud.SetHUD(heroUnit);
+        addUnit(heroUnit);
+        Debug.Log("Hero successful.");
+        //Initialise assistant object.
+        addUnit(assistantUnit); 
         //Initialise enemy objects
         List<Unit> livingEnemies = new List<Unit>();
         for (int i = 0; i < enemies.Length && enemies[i] != null; i++){
             livingEnemies.Add(enemies[i]);
-            enemyHUDs[i].SetHUD(enemies[i]);
-            //TODO: Custom enemy walk in text
-            dialogueText.UpdateText("A "+enemies[i].unitName+" politely approaches.");  
+            addUnit(enemies[i]);
             yield return new WaitForSeconds(2f);    //Wait time should match enemy entrance text.
         }
         enemies = livingEnemies.ToArray();     
         
         //Setup finished, change state
         changeState();
+    }
+
+    private void addUnit(Unit unit){
+        unitNameDict.Add(unit.unitName, unit);
+        unit.battleHud.SetHUD(unit);
+        dialogueText.UpdateText(unit.walkInString);
     }
 
 //////////////////////////////////////////////TURN FUNCTIONS//////////////////////////////////////////////
@@ -67,8 +70,8 @@ public class BattleSystem : MonoBehaviour
 
     IEnumerator HeroTurn(){
         bool isDead = false;
-        yield return StartCoroutine(processGenericAction(battleScript.getHeroAction(), heroUnit, enemies[0], 
-            enemyHUDs[0], boolean => isDead = boolean));
+        yield return StartCoroutine(processGenericAction(battleScript.getNextAction(), heroUnit, 
+             boolean => isDead = boolean));
         //yield return new WaitForSeconds(1f);
         if(isDead){
             state = BattleState.WON;
@@ -79,11 +82,10 @@ public class BattleSystem : MonoBehaviour
     }
 
     IEnumerator EnemyTurn(){
-        List<Action> actions = battleScript.getEnemyActions();
         bool isDead = false;
-        for (int i = 0; i < enemies.Length; i++){
-            yield return StartCoroutine(processGenericAction(actions[i], enemies[i], assistantUnit, 
-                assistantHud, boolean => isDead = boolean));
+        foreach (Unit enemy in enemies){
+            yield return StartCoroutine(processGenericAction(battleScript.getNextAction(), enemy, 
+                boolean => isDead = boolean));
             //yield return new WaitForSeconds(1f);
             if(isDead){
                 state = BattleState.LOST;
@@ -107,31 +109,32 @@ public class BattleSystem : MonoBehaviour
 //////////////////////////////////////////////PROCESS ACTIONS//////////////////////////////////////////////
 
     /*Processes generic actions and returns whether target was killed with callback.*/
-    IEnumerator processGenericAction(Action action, Unit myself, Unit target, BattleHud targetHud,
+    IEnumerator processGenericAction(Action action, Unit myself,
         System.Action<bool> callbackOnFinish){
         
         bool isDead = false;
         if(action == Action.ATTACK){
-                dialogueText.UpdateText(myself.unitName+" attacks!");
-                yield return new WaitForSeconds(1f);
-                isDead = target.TakeDamage(myself.damage);
-                targetHud.SetHP(target.currentHP);
-            }else if (action == Action.DEFEND){
-                dialogueText.UpdateText(myself.unitName+" defends!");
-                //yield return new WaitForSeconds(1f);
-            }else if (action == Action.TAUNT){
-                dialogueText.UpdateText(myself.unitName+" taunts!");
-                //yield return new WaitForSeconds(1f);
-            }else if (action == Action.IDLE){
-                dialogueText.UpdateText(myself.unitName+" does absolutely nothing!");
-                //yield return new WaitForSeconds(1f);
-            }//else SKIP
+            Unit target = unitNameDict[battleScript.getNextTarget()];
+            dialogueText.UpdateText(myself.unitName+" attacks!");
+            yield return new WaitForSeconds(1f);
+            isDead = target.TakeDamage(myself.damage);
+            //targetHud.SetHP(target.currentHP);
+        }else if (action == Action.DEFEND){
+            dialogueText.UpdateText(myself.unitName+" defends!");
+            //yield return new WaitForSeconds(1f);
+        }else if (action == Action.TAUNT){
+            dialogueText.UpdateText(myself.unitName+" taunts!");
+            //yield return new WaitForSeconds(1f);
+        }else if (action == Action.IDLE){
+            dialogueText.UpdateText(myself.unitName+" does absolutely nothing!");
+            //yield return new WaitForSeconds(1f);
+        }//else SKIP
         callbackOnFinish(isDead);   //Calls a function so as to return this result.
     }
 
     IEnumerator PlayerAttackAction(){
         bool isDead = enemies[0].TakeDamage(assistantUnit.damage);
-        enemyHUDs[0].SetHP(enemies[0].currentHP);
+        //enemyHUDs[0].SetHP(enemies[0].currentHP);
         dialogueText.UpdateText(enemies[0].unitName+" has just taken "+assistantUnit.damage+" damage!");
         //Wait
         yield return new WaitForSeconds(2f);
