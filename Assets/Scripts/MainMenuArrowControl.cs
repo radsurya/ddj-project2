@@ -6,7 +6,7 @@ using TMPro;
 
 public class MainMenuArrowControl : MonoBehaviour
 {
-    public static int pos = 1;
+    int pos = 1;
     static float moveOne = 0.28f;
     static float changeSide = moveOne;
 
@@ -65,6 +65,31 @@ public class MainMenuArrowControl : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Return))
         {
             arrow.GetComponent<SpriteRenderer>().enabled = false;
+            switch (pos)
+            {
+                case 1: //PLAY
+                    startGame();
+                    break;
+                case 2: //QUIT
+                    quitGame();
+                    break;
+                
+            }
         }
+    }
+
+    public void startGame()
+    {
+        GameManager.ChangeScene(GameManager.cutScene1);
+    }
+
+    public void quitGame()
+    {
+        #if UNITY_EDITOR
+        
+        UnityEditor.EditorApplication.isPlaying = false;
+
+        #endif
+        Application.Quit();
     }
 }

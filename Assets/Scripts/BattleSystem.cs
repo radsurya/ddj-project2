@@ -130,8 +130,8 @@ public class BattleSystem : MonoBehaviour
     IEnumerator CloseGame(){        
             yield return new WaitUntil(dialogueText.isIdle);
             yield return new WaitForSeconds(1f);
-            UnityEditor.EditorApplication.isPlaying = false;
-            //Application.Quit();
+            //UnityEditor.EditorApplication.isPlaying = false;
+            Application.Quit();
     }
 
 //////////////////////////////////////////////PROCESS ACTIONS//////////////////////////////////////////////
