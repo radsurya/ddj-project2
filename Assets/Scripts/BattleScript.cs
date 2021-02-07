@@ -53,6 +53,10 @@ public class BattleScript{
             turnThree(playerAction, target);
         }else if(!phase4Complete){
             turnFour(playerAction, target);
+        }else if(!phase5Complete){
+            turnFive(playerAction, target);
+        }else{
+            //win the game
         }
     }
 
@@ -311,7 +315,6 @@ public class BattleScript{
             outcomes.Add("Realising you still have two limbs which aren’t immobilised, you make like a tree and leave.");
             outcomes.Add("You spend the rest of your days cohabiting the dungeon with your new blobby neighbours, Lefty and Righty, names they decided based on their respective arms.");
             outcomes.Add("On some days you can still hear the Hero wandering around, looking for his next opportunity to save you.");
-            targets.Add(heroTarget);
             end = 2; //FAIL - Doing nothing and being emprisoned by the blob
         }else{
             outcomes.Add("Hero: “Take this, you hypocritical blob!”");
@@ -331,7 +334,61 @@ public class BattleScript{
         phase4Complete = true;
         deadTurn = 0;
         
-        actions.Add(Action.ATTACK);
+        actions.Add(Action.ATTACK); targets.Add(heroTarget);
+        actions.Add(Action.SKIP);
+        actions.Add(Action.SKIP);
+    }
+
+    private void turnFive(Action playerAction, string target){
+        string heroTarget = findHighestHealth();
+        intents.Add("The Hero prepares to slash… well, you!");
+        intents.Add("Hero: “I’ll save what’s left of you, friend!”");
+        intents.Add("Assistant: “Everything’s left of me, so put that sword away!”");
+        intents.Add("The Blob does not bobble, since it’s stuck on your arm, not on the ground. But it’s stuck on your arm mockingly.”");
+        intents.Add("You realise getting close to the Hero when they’re preparing to slash your arm off might not be the brightest idea.");
+        if(playerAction == Action.SKIP)
+            return; //No need to process rest of behaviour.
+        if(playerAction == Action.HIDE){
+            if (target.Equals(hero)){ 
+                outcomes.Add("You run behind the Hero.");
+                outcomes.Add("Hero: “Wait, I can’t see you like this. You must let me save you, friend!”");
+                outcomes.Add("Assistant: “I must question your definition of save!”");
+                outcomes.Add("The Hero starts turning around, but you stick to his back, your arm on the line.");
+                outcomes.Add("Hero: “Oh my, this is making me dizzy… Wait, I got an idea.”");
+                outcomes.Add("Suddenly, the Hero starts spinning like a ballerina, their sword held out!");
+                outcomes.Add("You decide it’s best to close your eyes and not think of what happens next.");
+                outcomes.Add("Thankfully, the Hero held the sword with the flat side of the blade up, so no heads went flying off, only your consciousness.");
+                outcomes.Add("When you next awake, you find yourself on a comfortable bed. A springy bed. A viscous bed. And you’re sinking into it!");
+                outcomes.Add("As it turns out, that bed became your new home, for your new life as the best friend of a giant blob.");
+                outcomes.Add("At least your new big and strong friend doesn’t attack you accidentally as much.");
+                actions.Add(Action.ATTACK); targets.Add(heroTarget);
+                actions.Add(Action.SKIP);
+                actions.Add(Action.SKIP);
+                end = 2;
+                return; //FAIL - Hid behind hero and being emprisoned by the blob
+            }if(target.Equals(rock)){
+
+            }
+        }else if (playerAction == Action.PUSH){
+            if(target.Equals(hero)){    //Try to push the hero
+                heroTarget = getNextUnit(heroTarget);
+            }    
+        }//Using items does nothing.
+
+        if(playerAction == Action.STOP){
+            if(target.Equals(hero)){    //Try to stop the hero                
+                outcomes.Add("You calmly and eloquently ask the Hero to stop, holding out your free arm.");
+                outcomes.Add("Assistant: “STOOOOOOOP! AAAAHHHHH! PLEASEEEEE!!!”");
+                outcomes.Add("The Hero is stunned by the sudden shout.");
+                outcomes.Add("Hero: “Ho-ho! I didn’t know you could shout that loud! Ow. My ears.”");
+                outcomes.Add("The Blob heard your calm request with its nonexistent ears. Deafened, it decides this really isn’t worth it, sliding off your arm and bobbling away.");
+            }
+        }
+        phase5Complete = true;
+        deadTurn = 0;
+        
+        end = 1; //win the game
+        actions.Add(Action.SKIP);
         actions.Add(Action.SKIP);
         actions.Add(Action.SKIP);
     }

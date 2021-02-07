@@ -71,7 +71,7 @@ public class BattleSystem : MonoBehaviour
 
     IEnumerator PlayerTurn(){
         //Wait until all dialogue has displayed.
-        yield return new WaitUntil(dialogueText.isIdle);                
+        //yield return new WaitUntil(dialogueText.isIdle);                
         battleScript.runTurn();
         dialogueText.UpdateText(battleScript.getTurnIntent());
         yield return new WaitUntil(dialogueText.isIdle); 
@@ -90,12 +90,12 @@ public class BattleSystem : MonoBehaviour
         yield return StartCoroutine(processGenericAction(battleScript.getNextAction(), heroUnit, 
              boolean => isDead = boolean));
         //yield return new WaitForSeconds(1f);
-        if(isDead){
+        /*if(isDead){
             state = BattleState.WON;
             EndBattle();
-        }else{
+        }else{*/
             changeState();
-        }        
+        //}        
     }
 
     IEnumerator EnemyTurn(){
@@ -321,10 +321,11 @@ public class BattleSystem : MonoBehaviour
             inactiveEnemies[i].gameObject.SetActive(true);
             livingEnemies.Add(inactiveEnemies[i]);
             addUnit(inactiveEnemies[i]);
+            Debug.Log(livingEnemies[i]);
         }
-        Debug.Log(livingEnemies);
+        Debug.Log(livingEnemies.Count);
         enemies = livingEnemies.ToArray();
-        Debug.Log(enemies);
+        Debug.Log(enemies.Length);
     }
 
     /*Auxilary function to be called at the end of turns.*/
