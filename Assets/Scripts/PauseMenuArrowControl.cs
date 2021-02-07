@@ -28,6 +28,7 @@ public class PauseMenuArrowControl : MonoBehaviour
         arrow.GetComponent<SpriteRenderer>().enabled = true;
         if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
         {
+            SoundManagerScript.playArrowMoveSound();
             if (pos == 1)
             {
                 Vector3 position = arrow.transform.position;
@@ -52,6 +53,7 @@ public class PauseMenuArrowControl : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
         {
+            SoundManagerScript.playArrowMoveSound();
             if (pos == 3)
             {
                 Vector3 position = arrow.transform.position;

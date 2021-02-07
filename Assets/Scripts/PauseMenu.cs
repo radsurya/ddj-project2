@@ -14,14 +14,16 @@ public class PauseMenu : MonoBehaviour
     void Update()
     {
         if(Input.GetKeyDown(KeyCode.Escape)){
-            if(GameIsPaused){
+            SoundManagerScript.playArrowSelectSound();
+            if (GameIsPaused){
                 Resume();
             }else{
                 Pause();
             }
         }
         if(Input.GetKeyDown(KeyCode.Return)){
-            if(GameIsPaused){
+            SoundManagerScript.playArrowSelectSound();
+            if (GameIsPaused){
                 switch (PauseMenuArrowControl.pos){
                     case 1: //RESUME
                         Resume();
@@ -41,14 +43,21 @@ public class PauseMenu : MonoBehaviour
 
     void Pause(){
         pauseMenu.SetActive(true);
-        mainArrow.SetActive(false);
+        if(mainArrow != null)
+        {
+            mainArrow.SetActive(false);
+        }
+        
         Time.timeScale = 0f;
         GameIsPaused = true;
     }
 
     void Resume(){
         pauseMenu.SetActive(false);
-        mainArrow.SetActive(true);
+        if (mainArrow != null)
+        {
+            mainArrow.SetActive(false);
+        }
         Time.timeScale = 1f;
         GameIsPaused = false;
     }

@@ -86,11 +86,6 @@ public class MainMenuArrowControl : MonoBehaviour
         Application.Quit();
     }
 
-
-}
-
-
-
     IEnumerator Delay()
     {
         SoundManagerScript.playArrowSelectSound();
@@ -111,6 +106,4 @@ public class MainMenuArrowControl : MonoBehaviour
     }
 }
 
-
-}
 
