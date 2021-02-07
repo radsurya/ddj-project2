@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 //Generalise for multiple scripts later.
 public class BattleScript{
+    //TODO: BattleSystem could call setup and update functions in the Script rather than the
+    //script having to know the battlesystem.
+    private BattleSystem battleSystem; 
     /*The battle progresses in phases. The first phase is the hero attacking the blob.
     The second phase is the Blob attacking us.
     Therefore, we can keep track of how many turns the current phase took (for dialogue or any other reason).*/
@@ -20,7 +23,7 @@ public class BattleScript{
     List<string> targets = new List<string>();
     List<string> outcomes = new List<string>();
 
-    //OBJECT NAMES
+    //OBJECT NAMES  
     private string hero = "Hero";
     private string assistant = "Assistant";
     private string bigBlob = "Big Blob";
@@ -29,6 +32,10 @@ public class BattleScript{
     private string rock = "Rock";
 
     public int end = 0; //0 - not finished, 1 - won, 2 - lost
+    
+    public BattleScript(BattleSystem battleSystem){
+        this.battleSystem = battleSystem;
+    }
 
     public void runTurn(){
         runTurn(Action.SKIP, "");
@@ -39,7 +46,6 @@ public class BattleScript{
         actions.Clear();
         outcomes.Clear();
         if(!phase1Complete){
-            Debug.Log("Entered phase 1, and my action is "+playerAction);
             turnOne(playerAction, target);
         }else if(!phase2Complete){
             turnTwo(playerAction, target);
@@ -65,6 +71,28 @@ public class BattleScript{
     }
     public List<string> getTurnOutcome(){        
         return outcomes;
+    }
+///////////////////////////////////////BEHAVIOUR FUNCTIONS///////////////////////////////////////
+    private string findHighestHealth(){
+        string highestHealth = null;
+        int max = 0;
+        Debug.Log("Find highest health: "+battleSystem.enemies);
+        for (int i = 0; i < battleSystem.enemies.Length && battleSystem.enemies[i] != null; i++){
+            if(battleSystem.enemies[i].currentHP > max){
+                highestHealth = battleSystem.enemies[i].unitName;
+                max = battleSystem.enemies[i].currentHP;
+            }
+        }
+        return highestHealth;
+    }
+
+    private string getNextUnit(string current){
+        string next = current;
+        foreach (Unit enemy in battleSystem.enemies){
+            if(!enemy.unitName.Equals(current))
+                next = enemy.unitName;
+        }
+        return next;
     }
 
 ///////////////////////////////////////TURNS///////////////////////////////////////
@@ -127,41 +155,30 @@ public class BattleScript{
         intents.Add("Assistant: “Wait, me??");
         if(playerAction == Action.SKIP)
             return; //No need to process rest of behaviour.
-        if (playerAction == Action.STOP)
-        {
-            if (target.Equals(hero))
-            {    //Try to stop the hero
+
+        actions.Add(Action.SKIP);
+        actions.Add(Action.ATTACK); targets.Add(hero);
+        if (playerAction == Action.STOP){
+            if (target.Equals(hero)){    //Try to stop the hero
                 outcomes.Add("Unfortunately, the Hero was too busy faffing about with his swords to listen to you.");
                 outcomes.Add("In any case, what the Hero is currently doing is not much different from nothing.");
-            }
-            else if (target.Equals(bigBlob))
-            {
+            }else if (target.Equals(bigBlob)){
                 outcomes.Add("As such, your measured argument was like blob in one ear and blob out the other.");
-            }
-            else
-            {  //Try to stop anything else
+            }else{  //Try to stop anything else
                 outcomes.Add("Your efforts at stopping something that has no intention to move were successful!");
             }
-        }
-        else if (playerAction == Action.PUSH)
-        {
-            if (target.Equals(hero))
-            {    //Try to push the hero
+        }else if (playerAction == Action.PUSH){
+            if (target.Equals(hero)){    //Try to push the hero
                 outcomes.Add("Yet, however much they'd like to attack, they are otherwise engaged for the moment.");
-            }
-            else if (target.Equals(bigBlob))
-            {
+            }else if (target.Equals(bigBlob)){
                 end = 2;
-            } //Pushing other things does nothing.      
-
+            } //Pushing other things does nothing. 
         }
         phase2Complete = true;
         deadTurn = 0; //Each flag/fase set resets the dead turn.
 
-        actions.Add(Action.SKIP);
         outcomes.Add("The Hero continues to grip their sword in hopes that it somehow comes off.\nEventually.");
 
-        actions.Add(Action.ATTACK); targets.Add(hero);
         outcomes.Add("The Big Blob jumps in your general direction!");
         outcomes.Add("Because the Hero was gripping their sword, it tears through the Big Blob when it jumps!");
         outcomes.Add("The Big Blob is divided into two Not-so-Big Blobs.");
@@ -188,10 +205,11 @@ public class BattleScript{
             return; //FAIL: LOSE - Turn into a blob.
         }
         outcomes.Add("Hero: “Ack! My beautiful nose!”");
-        //outcomes.Add("Scene2");
     }
+
     private void turnThree(Action playerAction, string target){
-        intents.Add("The Hero prepares to slash at "+notSoBigBlobA+", his nose covered in snot.");
+        string heroTarget = findHighestHealth();
+        intents.Add("The Hero prepares to slash at "+heroTarget+", his nose covered in snot.");
         intents.Add("Hero: “It’s not snot! It’s blob! You covered my nose in blob, one of you!”");
         intents.Add("The Blobs bobble mockingly.");
         intents.Add("You try to avoid mocking the Hero, since that sword is looking pretty sharp, as the now divided blob can attest to.");
@@ -199,37 +217,31 @@ public class BattleScript{
             return; //No need to process rest of behaviour.
         if(playerAction == Action.STOP){
             if(target.Equals(hero)){    //Try to stop the hero
-                actions.Add(Action.SKIP);   //Hero
                 outcomes.Add("You briefly make the Hero reconsider the value of blob as a fashion statement.");
                 outcomes.Add("The Hero refrains from attacking as he ponders your valuable advice.");
-                actions.Add(Action.SKIP);   //notSoBigBlobA
-                actions.Add(Action.SKIP);   //notSoBigBlobB
+                if(deadTurn > 0){
+                    outcomes.Add("You yourself ponder at the Hero's propensity to ponder at your command.");
+                    outcomes.Add("The Not-so-Big Blobs ponder on whether to bobble menacingly.");
+                }else{
+                    outcomes.Add("The Not-so-Big Blobs continue to bobble menacingly, ready to push the fashion world forward everywhere.");
+                }
+                deadTurn++;
+                actions.Clear(); targets.Clear();
+                actions.Add(Action.SKIP);
+                actions.Add(Action.SKIP);  
+                actions.Add(Action.SKIP);
+                return;  
             }
-            if(deadTurn > 0){
-                outcomes.Add("You yourself ponder at the Hero's propensity to ponder at your command.");
-                outcomes.Add("The Not-so-Big Blobs ponder on whether to bobble menacingly.");
-            }else{
-                outcomes.Add("The Not-so-Big Blobs continue to bobble menacingly, ready to push the fashion world forward everywhere.");
-            }
-            deadTurn++;
-            return;
-
         }else if (playerAction == Action.PUSH){
             if(target.Equals(hero)){    //Try to push the hero
-                targets.Add(notSoBigBlobB);
-            }else if(target.Equals(bigBlob)){
-                end = 2;
+                heroTarget = getNextUnit(heroTarget);
             }     
         }//Using items does nothing.
-
-        //Attacks A if target was not changed.
-        if (playerAction != Action.PUSH || !target.Equals(hero)){
-            targets.Add(notSoBigBlobA);
-        }
-
-        actions.Add(Action.ATTACK);
+        //ACTIONS
+        actions.Add(Action.ATTACK); targets.Add(heroTarget);
         actions.Add(Action.SKIP);
         actions.Add(Action.SKIP);
+
         phase3Complete = true;
         deadTurn = 0;
 
@@ -238,17 +250,28 @@ public class BattleScript{
         outcomes.Add("The Hero slashes "+targets[0]+" powerfully!");
         outcomes.Add("The slash is mildly uncomfortable on its blobby body. Another dose of sword is likely to persuade it to leave.");
     }
+    
     private void turnFour(Action playerAction, string target){
-        intents.Add("The Hero prepares to slash at "+notSoBigBlobB+", his nose covered in snot.");
+        string heroTarget = findHighestHealth();
+        intents.Add("The Hero prepares to slash at "+heroTarget+", his nose covered in snot.");
         intents.Add("Hero: “Achoo!”");
         intents.Add("The Blobs, disgusted at the Hero’s snot, prepare to jump at you. Two blobs of their size is too much for you to handle.");
         intents.Add("Hero: “It’s your fault, dammit! Prepare to taste steel!”");
         intents.Add("You overcome your instincts and stop yourself from mentioning the Hero’s sword is not made of steel.");
         if(playerAction == Action.SKIP)
             return; //No need to process rest of behaviour.
-        if(playerAction == Action.HIDE){
-            if (target.Equals(hero))
-            { 
+        if(playerAction == Action.STOP){
+            if(target.Equals(hero)){    //Try to stop the hero                
+                outcomes.Add("You briefly make the Hero reconsider the value of blob as a fashion statement.");
+                outcomes.Add("The Hero refrains from attacking as he ponders your valuable advice.");
+                actions.Add(Action.SKIP);   //Hero
+                actions.Add(Action.ATTACK); targets.Add(assistant);
+                actions.Add(Action.ATTACK); targets.Add(assistant);
+                end = 2;
+                return;
+            }
+        }else if(playerAction == Action.HIDE){
+            if (target.Equals(hero)){ 
                 outcomes.Add("The Hero slashes Not-so-Big Blob B powerfully!");
                 outcomes.Add("The slash is mildly uncomfortable on its blobby body. Another dose of sword is likely to persuade it to leave.");
                 outcomes.Add("Both blobs jump at you!");
@@ -260,36 +283,20 @@ public class BattleScript{
                 outcomes.Add("When you next awake, you find yourself on a comfortable bed. A springy bed. A viscous bed. And you’re sinking into it!");
                 outcomes.Add("As it turns out, that bed became your new home, for your new life as the best friend of a giant blob.");
                 outcomes.Add("At least your new big and strong friend doesn’t attack you accidentally as much.");
-                actions.Add(Action.ATTACK);
-                targets.Add(notSoBigBlobB);
+                actions.Add(Action.ATTACK); targets.Add(heroTarget);
+                actions.Add(Action.ATTACK); targets.Add(hero);
+                actions.Add(Action.ATTACK); targets.Add(hero);
                 end = 2;
                 return; //FAIL - Hid behind hero and being emprisoned by the blob
+            }if(target.Equals(rock)){
+
             }
         }else if (playerAction == Action.PUSH){
             if(target.Equals(hero)){    //Try to push the hero
-                actions.Add(Action.ATTACK);
-                targets.Add(notSoBigBlobA);
-            }else if(target.Equals(bigBlob)){
-                end = 2;
-            }     
-        }else if(playerAction == Action.STOP){
-            if(target.Equals(hero)){    //Try to stop the hero
-                actions.Add(Action.SKIP);   //Hero
-                outcomes.Add("You briefly make the Hero reconsider the value of blob as a fashion statement.");
-                outcomes.Add("The Hero refrains from attacking as he ponders your valuable advice.");
-                actions.Add(Action.ATTACK);   //notSoBigBlobA
-                targets.Add(assistant);
-                actions.Add(Action.ATTACK);   //notSoBigBlobB
-                targets.Add(assistant);
-                end = 2;
-                return;
-            }
+                heroTarget = getNextUnit(heroTarget);
+            }    
         }//Using items does nothing.
 
-        //Attacks B if target was not changed.
-        if (playerAction != Action.PUSH || !target.Equals(hero)){
-            targets.Add(notSoBigBlobA);
-        }
         if(playerAction != Action.HIDE && !(playerAction == Action.PUSH && target.Equals(hero))){
             outcomes.Add("The Hero slashes Not-so-Big Blob B powerfully!");
             outcomes.Add("The slash is mildly uncomfortable on its blobby body. Another dose of sword is likely to persuade it to leave.");
@@ -304,15 +311,15 @@ public class BattleScript{
             outcomes.Add("Realising you still have two limbs which aren’t immobilised, you make like a tree and leave.");
             outcomes.Add("You spend the rest of your days cohabiting the dungeon with your new blobby neighbours, Lefty and Righty, names they decided based on their respective arms.");
             outcomes.Add("On some days you can still hear the Hero wandering around, looking for his next opportunity to save you.");
-            targets.Add(notSoBigBlobB);
+            targets.Add(heroTarget);
             end = 2; //FAIL - Doing nothing and being emprisoned by the blob
         }else{
             outcomes.Add("Hero: “Take this, you hypocritical blob!”");
             outcomes.Add("The Not-so-Big Blob regrets not having a cellphone to call its lawyer.");
-            outcomes.Add("The Hero slashes at " + notSoBigBlobB + ", but your shove makes him hit " + targets[0] + "!");
+            outcomes.Add("The Hero slashes at the blob they aimed for, but your shove makes them hit " + heroTarget + "!");
             outcomes.Add("The slashes are getting to be annoying, so the blob bobbles away.");
             outcomes.Add("Hero: “Ha! A hypocritical coward!”");
-            outcomes.Add(notSoBigBlobB + " jumps in your general direction!");
+            outcomes.Add(heroTarget + " jumps in your general direction!");
             outcomes.Add("The Blob hits you in the arm, absorbing it!");
             outcomes.Add("Assistant: “Oh no, I can’t move my arm. And the Hero will probably...”");
             outcomes.Add("Hero: “I got one, my friend. Now it’s just…”");
