@@ -55,8 +55,6 @@ public class BattleScript{
             turnFour(playerAction, target);
         }else if(!phase5Complete){
             turnFive(playerAction, target);
-        }else{
-            //win the game
         }
     }
 
