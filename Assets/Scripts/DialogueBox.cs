@@ -9,7 +9,7 @@ public class DialogueBox : MonoBehaviour
     public TextMeshProUGUI dialogueText;
     static float lettertime = 0.05f;
 
-    bool typing = false;
+    public bool typing = false;
     
     private Queue<string> messages = new Queue<string>();
     private string currentMessage;

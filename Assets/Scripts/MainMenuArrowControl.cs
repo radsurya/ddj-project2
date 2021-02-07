@@ -80,7 +80,7 @@ public class MainMenuArrowControl : MonoBehaviour
 
     public void startGame()
     {
-        GameManager.ChangeScene(GameManager.levelScene);
+        GameManager.ChangeScene(GameManager.cutScene1);
     }
 
     public void quitGame()

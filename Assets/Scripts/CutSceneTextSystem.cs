@@ -5,6 +5,10 @@ using UnityEngine;
 public class CutSceneTextSystem : MonoBehaviour
 {
     public DialogueBox dialogueText;
+    public int count;
+    bool aux = true;
+    bool playerFlip = false;
+    bool heroFlip = false;
 
     // Start is called before the first frame update
     void Start()
@@ -15,11 +19,56 @@ public class CutSceneTextSystem : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (dialogueText.typing && aux) 
+        {
+            count++;
+            Debug.Log("Typing");
+            aux = false;
+        }
+
+        if (!dialogueText.typing && !aux) 
+        {
+            Debug.Log("Stopped Typing");
+            aux = true;
+        }
+
+        if (count == 12 && !dialogueText.typing) 
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                GameManager.ChangeScene(GameManager.levelScene);
+            }
+        }
+
+        if (count == 2 && !playerFlip) 
+        {
+            GameObject.FindWithTag("Player").transform.localScale = new Vector3(45, 45, 45);
+            playerFlip = true;
+        }
+
+        if (count == 8 && playerFlip)
+        {
+            GameObject.FindWithTag("Player").transform.localScale = new Vector3(-45, 45, 45);
+            playerFlip = false;
+        }
+
+        if (count == 9 && !playerFlip)
+        {
+            GameObject.FindWithTag("Player").transform.localScale = new Vector3(45, 45, 45);
+            playerFlip = true;
+        }
+
+        if (count == 7 && !heroFlip)
+        {
+            GameObject.FindWithTag("Hero").transform.localScale = new Vector3(45, 45, 45);
+            heroFlip = true;
+        }
     }
 
     IEnumerator SetupDialog() 
     {
+        count = 0;
+
         string[] messages = {
             "HERO: Why hello there little man! Are you lost?!", //0
             "YOU: Oh... Hi Mr... Big... Hero Guy...", //1
@@ -28,31 +77,18 @@ public class CutSceneTextSystem : MonoBehaviour
             "YOU: Humm... Actually I was just passing here on my way home... I come this way pretty often...", //4
             "HERO: Worry not my friend! I shall help guide you across this journey!", //5
             "HERO: Follow me, we shall take a shortcut through that completely harmless looking cave, that is surely not filled with monsters that could threaten your life!", //6
-            "YOU: Wait... Hum... Actually, I think this other way is faster...", //7
+            "YOU: Wait... Hum... Actually, I usually go this other way, its a bit faster...", //7
             "HERO: Come now! If we do find any enemies, I shall them with ease!", //8
-            "YOU: Oh... Ok then... Sure...", //9
-            "YOU: (I got a bad feeling about this)", //10
-            "HERO: Look out a menacing looking blob... thing... approaches!", //11
+            "YOU: Oh... Ok then... Sure I guess...", //9
+            "YOU: I got a bad feeling about this...", //10
+            "HERO: Look out a menacing looking blob... thing... approaches! (Click to continue)", //11
             };
-
-        dialogueText.UpdateText(messages[0]);
-        dialogueText.UpdateText(messages[1]);
-        //if(dialogueText.numberOfMessages() )
-        GameObject.FindWithTag("Player").transform.localScale = new Vector3(45, 45, 45); // Virar assistente para a direita
 
         for (int i = 0; i < messages.Length; i++)
         {
             dialogueText.UpdateText(messages[i]);
-            if (i == 1) 
-            {
-                GameObject.FindWithTag("Player").transform.localScale = new Vector3(45, 45, 45); // Virar assistente para a direita
-            }
-
-            if (i == 6) 
-            {
-                GameObject.FindWithTag("Hero").transform.localScale = new Vector3(45, 45, 45); // Virar heroi para a direita
-            }
         }
+      
         yield return new WaitForSeconds(2f);
     }
 }
