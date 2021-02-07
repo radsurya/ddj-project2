@@ -4,9 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class MainMenuArrowControl : MonoBehaviour
+public class PauseMenuArrowControl : MonoBehaviour
 {
-    int pos = 1;
+    public static int pos = 1;
     static float moveOne = 0.28f;
     static float changeSide = moveOne;
 
@@ -28,34 +28,45 @@ public class MainMenuArrowControl : MonoBehaviour
         arrow.GetComponent<SpriteRenderer>().enabled = true;
         if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
         {
-            SoundManagerScript.playArrowMoveSound();
             if (pos == 1)
             {
                 Vector3 position = arrow.transform.position;
                 position.y = position.y - changeSide;
+                position.y = position.y - changeSide;
                 arrow.transform.position = position;
-                pos = 2;
+                pos = 3;
             }
-            else
+            else if(pos == 2){
+                Vector3 position = arrow.transform.position;
+                position.y = position.y + changeSide;
+                arrow.transform.position = position;
+                pos = 1;
+            }else
             {
                 Vector3 position = arrow.transform.position;
                 position.y = position.y + moveOne;
                 arrow.transform.position = position;
-                pos = 1;
+                pos = 2;
             }
 
         }
         if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
         {
-            SoundManagerScript.playArrowMoveSound();
-            if (pos == 2)
+            if (pos == 3)
             {
                 Vector3 position = arrow.transform.position;
+                position.y = position.y + changeSide;
                 position.y = position.y + changeSide;
                 arrow.transform.position = position;
                 pos = 1;
             }
-            else
+            else if(pos == 2)
+            {
+                Vector3 position = arrow.transform.position;
+                position.y = position.y - changeSide;
+                arrow.transform.position = position;
+                pos = 3;
+            }else
             {
                 Vector3 position = arrow.transform.position;
                 position.y = position.y - moveOne;
@@ -66,51 +77,7 @@ public class MainMenuArrowControl : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Return))
         {
-            StartCoroutine(Delay());
-        }
-    }
-
-
-    public void startGame()
-    {
-        GameManager.ChangeScene(GameManager.cutScene1);
-    }
-
-    public void quitGame()
-    {
-        #if UNITY_EDITOR
-        
-        UnityEditor.EditorApplication.isPlaying = false;
-
-        #endif
-        Application.Quit();
-    }
-
-
-}
-
-
-
-    IEnumerator Delay()
-    {
-        SoundManagerScript.playArrowSelectSound();
-        arrow.GetComponent<SpriteRenderer>().enabled = false;
-        yield return new WaitForSeconds(1);
-        Debug.Log("wait is over");
-      
-        switch (pos)
-        {
-            case 1: //PLAY
-                startGame();
-                break;
-            case 2: //QUIT
-                quitGame();
-                break;
-
+            arrow.GetComponent<SpriteRenderer>().enabled = false;
         }
     }
 }
-
-
-}
-

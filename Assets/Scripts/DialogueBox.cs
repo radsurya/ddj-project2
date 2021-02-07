@@ -11,7 +11,7 @@ public class DialogueBox : MonoBehaviour
 
     public bool typing = false;
     
-    private Queue<string> messages = new Queue<string>();
+    private static Queue<string> messages = new Queue<string>();
     private string currentMessage;
 
     /*Updates text to display the following messages.*/
@@ -93,5 +93,9 @@ public bool dialogueFinished = false;
 
     public int numberOfMessages(){
         return messages.Count;
+    }
+
+    public static void CleanMessages(){
+        messages.Clear();
     }
 }

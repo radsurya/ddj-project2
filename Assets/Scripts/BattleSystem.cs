@@ -19,11 +19,13 @@ public class BattleSystem : MonoBehaviour
     public Unit assistantUnit;
     private Vector3 assistantPosition;
     private SpriteRenderer assistantSpriteRenderer;
-    public Unit[] enemies = new Unit[4];    
+    public Unit[] enemies = new Unit[4];
+
+    public Unit[] inactiveEnemies = new Unit[4];    
 
     public DialogueBox dialogueText;
 
-    private BattleScript battleScript = new BattleScript();
+    private BattleScript battleScript;
     private Dictionary<string,Unit> unitNameDict = new Dictionary<string, Unit>();  
     //Game level. Tutorial is 0.
     //int level = 0;
@@ -38,10 +40,10 @@ public class BattleSystem : MonoBehaviour
     //IEnumerator to turn setup into Coroutine and make it wait.
     IEnumerator SetupBattle(){
         //WARNING: Each scene needs to be manually prepared, for different levels.
+        battleScript = new BattleScript(this);
 
         //Initialise hero object.
         addUnit(heroUnit);
-        Debug.Log("Hero successful.");
         //Initialise assistant object.
         addUnit(assistantUnit); 
         assistantPosition = assistantUnit.transform.position;
@@ -69,7 +71,10 @@ public class BattleSystem : MonoBehaviour
 
     IEnumerator PlayerTurn(){
         //Wait until all dialogue has displayed.
-        yield return new WaitUntil(dialogueText.isIdle);
+        //yield return new WaitUntil(dialogueText.isIdle);                
+        battleScript.runTurn();
+        dialogueText.UpdateText(battleScript.getTurnIntent());
+        yield return new WaitUntil(dialogueText.isIdle); 
         state = BattleState.PLAYERTURN;
         //Reset assistant position.
         assistantUnit.transform.position = assistantPosition;
@@ -85,12 +90,12 @@ public class BattleSystem : MonoBehaviour
         yield return StartCoroutine(processGenericAction(battleScript.getNextAction(), heroUnit, 
              boolean => isDead = boolean));
         //yield return new WaitForSeconds(1f);
-        if(isDead){
+        /*if(isDead){
             state = BattleState.WON;
             EndBattle();
-        }else{
+        }else{*/
             changeState();
-        }        
+        //}        
     }
 
     IEnumerator EnemyTurn(){
@@ -313,6 +318,23 @@ public class BattleSystem : MonoBehaviour
         }
     }
 
+    /*Transforms Big Blob into Not-so-Big Blobs*/
+    public void changeScene(){
+        foreach (Unit enemy in enemies){
+            enemy.gameObject.SetActive(false);
+        }
+        List<Unit> livingEnemies = new List<Unit>();
+        for (int i = 0; i < inactiveEnemies.Length && inactiveEnemies[i] != null; i++){
+            inactiveEnemies[i].gameObject.SetActive(true);
+            livingEnemies.Add(inactiveEnemies[i]);
+            addUnit(inactiveEnemies[i]);
+            Debug.Log(livingEnemies[i]);
+        }
+        Debug.Log(livingEnemies.Count);
+        enemies = livingEnemies.ToArray();
+        Debug.Log(enemies.Length);
+    }
+
     /*Auxilary function to be called at the end of turns.*/
     private void changeState(){
         switch (state){
@@ -326,9 +348,7 @@ public class BattleSystem : MonoBehaviour
             case BattleState.ENEMYTURN:
                 dialogueText.UpdateText(battleScript.getTurnOutcome()); 
                 goto default;
-            default:    //Not a normal state, start player turn.                
-                battleScript.runTurn();
-                dialogueText.UpdateText(battleScript.getTurnIntent());
+            default:    //Not a normal state, start player turn.
                 StartCoroutine(PlayerTurn());
                 break;
         }
