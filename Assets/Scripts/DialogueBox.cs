@@ -35,9 +35,26 @@ public bool dialogueFinished = false;
         if (messages.Count > 0) //In theory this check is redundant.
         {
             currentMessage = messages.Dequeue();
+
             /*if(currentMessage.Contains("Scene")){   //WARNING: Very rough method.
                 SceneManager.LoadScene(currentMessage);
             }*/
+
+            if(currentMessage.Contains("The Big Blob is divided into two Not-so-Big Blobs.")){   //WARNING: Very rough method.
+                GameObject.Find("BattleSystem").GetComponent<BattleSystem>().changeScene();
+            }
+
+            if (currentMessage.Contains("You have survived yet another ordeal!"))
+            {   
+                BattleMusic.muteMusic();
+                SoundManagerScript.playVictoryMusic();
+            }
+            if (currentMessage.Contains("GAME OVER"))
+            {
+                BattleMusic.muteMusic();
+                SoundManagerScript.playLossMusic();
+            }
+
             dialogueText.text = "";
             foreach (char letter in currentMessage.ToCharArray())
             {

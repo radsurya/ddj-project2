@@ -122,11 +122,17 @@ public class BattleSystem : MonoBehaviour
         }
         StartCoroutine(CloseGame());
     }
-    IEnumerator CloseGame(){        
-            yield return new WaitUntil(dialogueText.isIdle);
-            yield return new WaitForSeconds(1f);
-            UnityEditor.EditorApplication.isPlaying = false;
-            //Application.Quit();
+
+    IEnumerator CloseGame(){
+
+        SoundManagerScript.playArrowSelectSound();
+        yield return new WaitUntil(dialogueText.isIdle);
+        //yield return new WaitForSeconds(1);
+
+        //UnityEditor.EditorApplication.isPlaying = false;
+        //Application.Quit();
+        GameManager.ChangeScene(GameManager.mainMenuScene); //volta ao menu inicial no final da batalha
+
     }
 
 //////////////////////////////////////////////PROCESS ACTIONS//////////////////////////////////////////////
@@ -291,7 +297,8 @@ public class BattleSystem : MonoBehaviour
             Debug.Log("Input disabled whilst typing");
             return; //Input disabled whilst typing.
         }*/
-        if(currentAction == Action.PUSH){
+        SoundManagerScript.playArrowSelectSound();
+        if (currentAction == Action.PUSH){
             Debug.Log(gameObject.ToString()+" selected to push!");
             StartCoroutine(PlayerPushAction(clickedObject));
         } else if(currentAction == Action.HIDE){

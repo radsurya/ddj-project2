@@ -28,6 +28,7 @@ public class MainMenuArrowControl : MonoBehaviour
         arrow.GetComponent<SpriteRenderer>().enabled = true;
         if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
         {
+            SoundManagerScript.playArrowMoveSound();
             if (pos == 1)
             {
                 Vector3 position = arrow.transform.position;
@@ -46,6 +47,7 @@ public class MainMenuArrowControl : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
         {
+            SoundManagerScript.playArrowMoveSound();
             if (pos == 2)
             {
                 Vector3 position = arrow.transform.position;
@@ -64,19 +66,10 @@ public class MainMenuArrowControl : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Return))
         {
-            arrow.GetComponent<SpriteRenderer>().enabled = false;
-            switch (pos)
-            {
-                case 1: //PLAY
-                    startGame();
-                    break;
-                case 2: //QUIT
-                    quitGame();
-                    break;
-                
-            }
+            StartCoroutine(Delay());
         }
     }
+
 
     public void startGame()
     {
@@ -92,4 +85,28 @@ public class MainMenuArrowControl : MonoBehaviour
         #endif
         Application.Quit();
     }
+
 }
+
+
+
+    IEnumerator Delay()
+    {
+        SoundManagerScript.playArrowSelectSound();
+        arrow.GetComponent<SpriteRenderer>().enabled = false;
+        yield return new WaitForSeconds(1);
+        Debug.Log("wait is over");
+      
+        switch (pos)
+        {
+            case 1: //PLAY
+                startGame();
+                break;
+            case 2: //QUIT
+                quitGame();
+                break;
+
+        }
+    }
+}
+

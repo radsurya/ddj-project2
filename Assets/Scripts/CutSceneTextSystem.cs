@@ -6,9 +6,11 @@ public class CutSceneTextSystem : MonoBehaviour
 {
     public DialogueBox dialogueText;
     public int count;
-    bool aux = true;
+    public int count2;
+    public bool aux = true;
     bool playerFlip = false;
     bool heroFlip = false;
+    public bool typing = false;
 
     // Start is called before the first frame update
     void Start()
@@ -19,6 +21,7 @@ public class CutSceneTextSystem : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        typing = dialogueText.typing;
         if (dialogueText.typing && aux) 
         {
             count++;
@@ -28,15 +31,18 @@ public class CutSceneTextSystem : MonoBehaviour
 
         if (!dialogueText.typing && !aux) 
         {
+            count2++;
             Debug.Log("Stopped Typing");
+            
             aux = true;
+               
         }
 
-        if (count == 12 && !dialogueText.typing) 
+        if (count == 12 && !dialogueText.typing && aux) 
         {
             if (Input.GetMouseButtonDown(0))
             {
-                GameManager.ChangeScene(GameManager.levelScene);
+                StartCoroutine(Delay());
             }
         }
 
@@ -67,6 +73,7 @@ public class CutSceneTextSystem : MonoBehaviour
 
     IEnumerator SetupDialog() 
     {
+
         count = 0;
 
         string[] messages = {
@@ -78,7 +85,7 @@ public class CutSceneTextSystem : MonoBehaviour
             "HERO: Worry not my friend! I shall help guide you across this journey!", //5
             "HERO: Follow me, we shall take a shortcut through that completely harmless looking cave, that is surely not filled with monsters that could threaten your life!", //6
             "YOU: Wait... Hum... Actually, I usually go this other way, its a bit faster...", //7
-            "HERO: Come now! If we do find any enemies, I shall them with ease!", //8
+            "HERO: Come now! If we do find any enemies, I shall slay them with ease!", //8
             "YOU: Oh... Ok then... Sure I guess...", //9
             "YOU: I got a bad feeling about this...", //10
             "HERO: Look out a menacing looking blob... thing... approaches! (Click to continue)", //11
@@ -90,5 +97,13 @@ public class CutSceneTextSystem : MonoBehaviour
         }
       
         yield return new WaitForSeconds(2f);
+    }
+
+    IEnumerator Delay()
+    {
+        SoundManagerScript.playArrowSelectSound();
+        yield return new WaitForSeconds(1);
+
+        GameManager.ChangeScene(GameManager.levelScene);
     }
 }

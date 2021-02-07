@@ -26,6 +26,7 @@ public class ArrowControl : MonoBehaviour
         arrow.GetComponent<SpriteRenderer>().enabled = true;
         if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
         {
+            SoundManagerScript.playArrowMoveSound();
             if (pos == 1)
             {
                 Vector3 position = arrow.transform.position;
@@ -44,6 +45,7 @@ public class ArrowControl : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
         {
+            SoundManagerScript.playArrowMoveSound();
             if (pos == 4)
             {
                 Vector3 position = arrow.transform.position;
@@ -62,6 +64,7 @@ public class ArrowControl : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Return))
         {
+            SoundManagerScript.playArrowSelectSound();
             arrow.GetComponent<SpriteRenderer>().enabled = false;
             switch (pos)
             {
