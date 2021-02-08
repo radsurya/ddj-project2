@@ -436,7 +436,7 @@ MonoBehaviour:
   itemString: You used your "Glasses" item! You now have glasses! You also had some
     before, so it doesn't make much of a difference.
   walkInString: You make your way behind them, unsure whether it is safer to stick
-    sloce or keep a distance.
+    close or keep a distance.
   attackString: 
   defendString: 
   idleString: 

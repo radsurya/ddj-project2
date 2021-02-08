@@ -38,7 +38,7 @@ public class CutSceneTextSystem : MonoBehaviour
                
         }
 
-        if (count == 12 && !dialogueText.typing && aux) 
+        if (count == 15 && !dialogueText.typing && aux) 
         {
             if (Input.GetMouseButtonDown(0))
             {
@@ -77,18 +77,21 @@ public class CutSceneTextSystem : MonoBehaviour
         count = 0;
 
         string[] messages = {
-            "HERO: Why hello there little man! Are you lost?!", //0
-            "YOU: Oh... Hi Mr... Big... Hero Guy...", //1
-            "HERO: Listen friend, I don't know how you got here, but you should know that this place is pretty dangerous!", //2
-            "HERO: There are all kinds of menacing, and not so menacing monsters out here!", //3
-            "YOU: Humm... Actually I was just passing here on my way home... I come this way pretty often...", //4
-            "HERO: Worry not my friend! I shall help guide you across this journey!", //5
-            "HERO: Follow me, we shall take a shortcut through that completely harmless looking cave, that is surely not filled with monsters that could threaten your life!", //6
-            "YOU: Wait... Hum... Actually, I usually go this other way, its a bit faster...", //7
-            "HERO: Come now! If we do find any enemies, I shall slay them with ease!", //8
-            "YOU: Oh... Ok then... Sure I guess...", //9
-            "YOU: I got a bad feeling about this...", //10
-            "HERO: Look out a menacing looking blob... thing... approaches! (Click to continue)", //11
+            "??? (On the right): Why, hello there, little man! Are you lost?!", //0
+            "YOU: Ah, no. I'm here on a Guild assignment to assist-", //1
+            "???: Assistant, you said? I see! I do indeed see! You must be my guild-assigned assistant!", //2
+            "ASSISTANT: Ah, well, my name is actually-",   //3
+            "???: Excellent news! Fantastic! You shall aid me immensely, I tell you!", //4
+            "ASSISTANT: Okay, I think I'm getting the kind of person you are, Mr. Hero...", //5
+            "HERO: But of course! You shall witness my heroic feats as we venture into the forest ahead!", //6
+            "HERO: Our objective? Well! Well, well, well... I'm sure... that'll become apparent as we explore!", //7
+            "ASSISTANT: Ah, yes, the guild assignment. As you know, I've been employed to assist you with this rescue operation.", //8
+            "HERO: Ah, that was it! We're rescuing a young boy, kidnapped by foul monsters, was it not?", //9
+            "ASSISTANT: Well, reportedly, he made his way into the forest on his own.", //10
+            "HERO: I see, and the terrible forest-dwellers keep him captive against his will? Unforgivable!", //11
+            "ASSISTANT: Or, perhaps more likely, he has gotten lost. I suggest-", //12
+            "HERO: Look out! A menacing looking blob... thing... approaches! Those foul monsters! I shall let them do evil no longer!", //13
+            "ASSISTANT: Ah, these creatures do tend to be peaceful unless... provoked... Oh dear."//14
             };
 
         for (int i = 0; i < messages.Length; i++)

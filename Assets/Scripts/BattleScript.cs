@@ -255,7 +255,7 @@ public class BattleScript{
     
     private void turnFour(Action playerAction, string target){
         string heroTarget = findHighestHealth();
-        intents.Add("The Hero prepares to slash at "+heroTarget+", his nose covered in snot.");
+        intents.Add("The Hero prepares to slash at Not-so-Big Blob A, his nose covered in snot.");
         intents.Add("Hero: “Achoo!”");
         intents.Add("The Blobs, disgusted at the Hero’s snot, prepare to jump at you. Two blobs of their size is too much for you to handle.");
         intents.Add("Hero: “It’s your fault, dammit! Prepare to taste steel!”");
@@ -320,7 +320,7 @@ public class BattleScript{
             outcomes.Add("The Hero slashes at the blob they aimed for, but your shove makes them hit " + heroTarget + "!");
             outcomes.Add("The slashes are getting to be annoying, so the blob bobbles away.");
             outcomes.Add("Hero: “Ha! A hypocritical coward!”");
-            outcomes.Add(heroTarget + " jumps in your general direction!");
+            outcomes.Add(getNextUnit(heroTarget) + " jumps in your general direction!");
             outcomes.Add("The Blob hits you in the arm, absorbing it!");
             outcomes.Add("Assistant: “Oh no, I can’t move my arm. And the Hero will probably...”");
             outcomes.Add("Hero: “I got one, my friend. Now it’s just…”");
