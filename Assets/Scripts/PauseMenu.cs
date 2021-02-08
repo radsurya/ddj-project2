@@ -56,7 +56,7 @@ public class PauseMenu : MonoBehaviour
         pauseMenu.SetActive(false);
         if (mainArrow != null)
         {
-            mainArrow.SetActive(false);
+            mainArrow.SetActive(true);
         }
         Time.timeScale = 1f;
         GameIsPaused = false;
